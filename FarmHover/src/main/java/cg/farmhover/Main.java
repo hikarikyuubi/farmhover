@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package farmhover;
+package cg.farmhover;
 
 import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
@@ -19,7 +19,7 @@ import javax.swing.JFrame;
 public class Main {
     
     public static void main(String args[]) {
-        /*
+        
         // Define qual versão da OpenGL que será usado
         GLProfile profile = GLProfile.get(GLProfile.GL3);
         
@@ -31,7 +31,7 @@ public class Main {
         // Criar Frame Buffer com dada configuração
         GLCanvas canvas = new GLCanvas(cap); 
         // Define quem desenhará no canvas
-        canvas.addGLEventListener(new Scene02()); 
+        canvas.addGLEventListener(new TestScene()); 
         // Tentará atualizar à taxa de 30 fps
         AnimatorBase animator = new FPSAnimator(canvas, 30);
         
@@ -45,6 +45,6 @@ public class Main {
         frame.setVisible(true);
         
         // Inicializa loop de animação
-        animator.start();*/
+        animator.start();
     }
 }
