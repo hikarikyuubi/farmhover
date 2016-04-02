@@ -5,10 +5,11 @@
  */
 package cg.farmhover;
 
-import cg.farmhover.gl.util.ShaderFactory;
-import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.Matrix4;
-import cg.farmhover.models.*;
+import cg.farmhover.models.SimpleModel;
+import cg.farmhover.models.WiredCube;
+import cg.farmhover.gl.util.Shader;
+import cg.farmhover.gl.util.ShaderFactory;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
