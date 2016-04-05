@@ -5,11 +5,20 @@
  */
 package cg.farmhover;
 
+import cg.farmhover.gl.core.Light;
+import cg.farmhover.gl.jWaveFront.JWavefrontObject;
 import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.models.SimpleModel;
 import cg.farmhover.models.WiredCube;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
+import cg.farmhover.gl.util.ShaderFactory.ShaderType;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
@@ -19,38 +28,78 @@ import javax.media.opengl.GLEventListener;
  *
  * @author Hikari Kyuubi
  */
-public class TestScene implements GLEventListener { 
+public class TestScene extends KeyAdapter implements GLEventListener { 
     
-    private Shader shader; // Configuração de comportamento da GPU
-    private SimpleModel cube; // Diretivas de desenho do modelo
-    private Matrix4 modelMatrix;
-    private float delta;
-    private float inc;
+    private final Shader shader; // Gerenciador dos shaders
+    private final Matrix4 modelMatrix;
+    private final Matrix4 projectionMatrix;
+    private final Matrix4 viewMatrix;
+    private final Light light;
+    private final JWavefrontObject cow, ufo, farm;
+    private float delta, dx, dz;
     
     public TestScene() {
-        // Define Shader a ser usado (como ele funcionará)
-        shader = ShaderFactory.getInstance(
-                                 ShaderFactory.ShaderType.MODEL_MATRIX_SHADER);
-        cube = new WiredCube(); // Define objeto a ser desenhado
+        shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
         modelMatrix = new Matrix4();
-        delta = 0.0f;
-        inc = 0.1f;
+        projectionMatrix = new Matrix4();
+        viewMatrix = new Matrix4();
+        light = new Light();
+        cow = new JWavefrontObject(new File("C:\\Users\\Hikari Kyuubi\\Documents\\GitStuff\\farmhover\\FarmHover\\models\\newCow.obj"));
+        ufo = new JWavefrontObject(new File("C:\\Users\\Hikari Kyuubi\\Documents\\GitStuff\\farmhover\\FarmHover\\models\\UFO.obj"));
+        farm = new JWavefrontObject(new File("C:\\Users\\Hikari Kyuubi\\Documents\\GitStuff\\farmhover\\FarmHover\\models\\farm.obj"));
+        delta = 5f;
+        dx = dz = 0f;
     }
     
     @Override // Configura a inicialização
     public void init(GLAutoDrawable glad) {
-        GL3 gl = glad.getGL().getGL3(); // Contexto de desenho
-        
-        // "Limpar" buffer com determinada cor (R, G, B, alfa)
-        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f); 
-    
-        shader.init(gl); // Manda shader para placa de vídeo
-        shader.bind(); // Faz com que a GPU funcione de acordo com o shader 
-        
-        cube.init(gl, shader); // Associa o objeto à GPU e ao shader
- 
-        // Associa matriz, e define um nome referente a ele (dentro do shader)
+        // Get pipeline
+        GL3 gl = glad.getGL().getGL3();
+
+        // Print OpenGL version
+        System.out.println("OpenGL Version: " + gl.glGetString(GL.GL_VERSION) + "\n");
+
+        gl.glClearColor(0.075f, 0.027f, 0.227f, 1.0f);
+        gl.glClearDepth(1.0f);
+
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        gl.glEnable(GL.GL_CULL_FACE);
+
+        //inicializa os shaders
+        shader.init(gl);
+
+        //ativa os shaders
+        shader.bind();
+
+        //inicializa a matrix Model and Projection
         modelMatrix.init(gl, shader.getUniformLocation("u_modelMatrix"));
+        projectionMatrix.init(gl, shader.getUniformLocation("u_projectionMatrix"));
+        viewMatrix.init(gl, shader.getUniformLocation("u_viewMatrix"));
+        
+        //init the light
+        light.setPosition(new float[]{10, 10, 50, 1.0f});
+        light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
+        light.setDiffuseColor(new float[]{0.75f, 0.75f, 0.75f, 1.0f});
+        light.setSpecularColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
+        light.init(gl, shader);
+        
+        try {
+            //init the model
+            ufo.init(gl, shader);
+            ufo.unitize();
+            //init the model
+            farm.init(gl, shader);
+            farm.unitize();
+            //init the model
+            cow.init(gl, shader);
+            cow.unitize();
+        } catch (IOException ex) {
+            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(-1);
+        }
+  
+        
+        
     }
     
     @Override // Chamado pelo animator
@@ -58,60 +107,71 @@ public class TestScene implements GLEventListener {
         GL3 gl = glad.getGL().getGL3(); // Contexto de desenho
         
         // A cada atualização, limpa de acordo com a cor do buffer
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+        gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
         
-        modelMatrix.loadIdentity(); // Limpa matriz para matriz de identidade
+        projectionMatrix.loadIdentity();
+        projectionMatrix.ortho(
+            -delta, delta, 
+            -delta, delta, 
+            -2 * delta, 2 * delta);
+        projectionMatrix.bind();
+        viewMatrix.loadIdentity();
+        viewMatrix.lookAt(
+            1, 1, 1, 
+            0, 0, 0, 
+            0, 1, 0);
+        viewMatrix.bind();
+        light.bind();
         
-        /* Se não utilizar o loadIdentity, a transformação acumulará a
-         * cada display. (ex: comente a linha acima)*/
-        modelMatrix.translate(0.2f, 0.1f, 0);
-        modelMatrix.scale(0.5f, 0.5f, 0.5f);
-        modelMatrix.rotate(30, 0, 0, 1);
-        modelMatrix.rotate(60, 1, 0, 0);
+        /* Desenho da fazenda */
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(0, 0, 0);
+        modelMatrix.scale(8, 8, 8);
         modelMatrix.rotate(45, 0, 1, 0);
-        /* Processo acima, na ordem de execução: Ry, Rx, Rz, S, T */
-         
-        modelMatrix.bind(); // Associa matriz à placa
-        cube.bind(); // Seleciona objeto a ser ativado
-        cube.draw(); // Desenha objeto ativo (deve ser o mesmo)
+        modelMatrix.bind();
+ 
+        farm.draw();
         
-        modelMatrix.loadIdentity(); // Limpa matriz para matriz de identidade
-        modelMatrix.translate(-0.2f, -0.1f, 0);
-        modelMatrix.scale(0.5f, 0.5f, 0.5f);
-        modelMatrix.rotate(-30, 0, 0, 1);
-        modelMatrix.rotate(-60, 1, 0, 0);
-        modelMatrix.rotate(-45, 0, 1, 0);
-            /* Processo acima, na ordem de execução: Ry, Rx, Rz, S, T */
-
-            modelMatrix.bind(); // Associa matriz à placa
-            cube.bind(); // Seleciona objeto a ser ativado
-            cube.draw(); // Desenha objeto ativo (deve ser o mesmo)
+        /* Desenho das vacas */
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(7,0,2);
+        modelMatrix.scale(1.5f,1.5f,1.5f);
+        modelMatrix.bind();
+        cow.draw();
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(8,0,2);
+        modelMatrix.scale(0.8f,0.8f,0.8f);
+        modelMatrix.rotate(-30, 0, 1, 0);
+        modelMatrix.bind();
+        cow.draw();
         
-        for (int i = 0; i < 5; i++) {
-            modelMatrix.loadIdentity(); // Limpa matriz para matriz de identidade
-            modelMatrix.translate(i/10, i/10, 0);
-            modelMatrix.scale(0.5f/(i+1), 0.5f/(i+1), 0.5f/(i+1));
-            modelMatrix.rotate(45, 0, 0, 1);
-            modelMatrix.rotate(45, 1, 0, 0);
-            modelMatrix.rotate(45, 0, 1, 0);
-            /* Processo acima, na ordem de execução: Ry, Rx, Rz, S, T */
+        /* Desenho do OVNI */
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(dx,2,dz);
+        modelMatrix.scale(3.5f,3.5f,3.5f);
+        modelMatrix.rotate(dx*5, 1, 0, 0);
+        modelMatrix.rotate(dz*5, 0, 0, 1);
+        modelMatrix.bind();
+        ufo.draw();
+    }
+    
+    @Override
+    public void keyPressed(KeyEvent e) {
 
-            modelMatrix.bind(); // Associa matriz à placa
-            cube.bind(); // Seleciona objeto a ser ativado 
-            cube.draw(); // Desenha objeto ativo (deve ser o mesmo)
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP://gira sobre o eixo-x
+                dx -= 1;
+                break;
+            case KeyEvent.VK_DOWN://gira sobre o eixo-x
+                dx += 1; 
+                break;
+            case KeyEvent.VK_LEFT://gira sobre o eixo-y
+                dz += 1; 
+                break;
+            case KeyEvent.VK_RIGHT://gira sobre o eixo-y
+                dz -= 1; 
+                break;
         }
-        
-        
-        if (delta > 0.4 || delta < -0.4) inc *= -1;
-        delta += inc;
-        modelMatrix.loadIdentity(); // Limpa matriz para matriz de identidade
-        modelMatrix.translate(delta, 0.5f, 0.0f);
-        modelMatrix.scale(0.5f, 0.5f, 0.5f);
-        /* Processo acima, na ordem de execução: Ry, Rx, Rz, S, T */
-         
-        modelMatrix.bind(); // Associa matriz à placa
-        cube.bind(); // Seleciona objeto a ser ativado
-        cube.draw(); // Desenha objeto ativo (deve ser o mesmo)
     }
     
     @Override
