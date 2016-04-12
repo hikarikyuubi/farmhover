@@ -13,6 +13,9 @@ import cg.farmhover.models.WiredCube;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
 import cg.farmhover.gl.util.ShaderFactory.ShaderType;
+import cg.farmhover.objects.Cow;
+import cg.farmhover.objects.Ufo;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -35,8 +38,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final Matrix4 projectionMatrix;
     private final Matrix4 viewMatrix;
     private final Light light;
-    private final JWavefrontObject cow, ufo, farm;
+    private final JWavefrontObject farm;
     private float delta, dx, dz;
+    private Ufo ufo;
+    private Cow cow;
     
     public TestScene() {
         shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
@@ -44,9 +49,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         projectionMatrix = new Matrix4();
         viewMatrix = new Matrix4();
         light = new Light();
-        cow = new JWavefrontObject(new File("C:\\Users\\mtgom\\Documents\\USP\\Semestre20161\\CG\\farmhover\\FarmHover\\models\\newCow.obj"));
-        ufo = new JWavefrontObject(new File("C:\\Users\\mtgom\\Documents\\USP\\Semestre20161\\CG\\farmhover\\FarmHover\\models\\UFO.obj"));
-        farm = new JWavefrontObject(new File("C:\\Users\\mtgom\\Documents\\USP\\Semestre20161\\CG\\farmhover\\FarmHover\\models\\farm.obj"));
+        cow = new Cow(1,0,1);
+        ufo = new Ufo();
+        farm = new JWavefrontObject(new File(".\\models\\plain.obj"));
         delta = 5f;
         dx = dz = 0f;
     }
@@ -82,17 +87,17 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         light.setDiffuseColor(new float[]{0.75f, 0.75f, 0.75f, 1.0f});
         light.setSpecularColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
         light.init(gl, shader);
-        
+
+
+        ufo.init(glad,shader);
+        cow.init(glad, shader);
+
         try {
-            //init the model
-            ufo.init(gl, shader);
-            ufo.unitize();
             //init the model
             farm.init(gl, shader);
             farm.unitize();
             //init the model
-            cow.init(gl, shader);
-            cow.unitize();
+
         } catch (IOException ex) {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
@@ -116,7 +121,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-                dx, 5, dz + 10,
+                dx, 1,dz + 10,
                 dx, 0, dz,
                 0, 1, 0);
         viewMatrix.bind();
@@ -124,26 +129,26 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         /* Desenho da fazenda */
         modelMatrix.loadIdentity();
         modelMatrix.translate(0, 0, 0);
-        modelMatrix.scale(20, 20, 20);
+        modelMatrix.scale(1000, 1000,1000);
        // modelMatrix.rotate(45, 0, 1, 0);
         modelMatrix.bind();
  
         farm.draw();
 
         /* Desenho das vacas */
-        /*
+
         modelMatrix.loadIdentity();
-        modelMatrix.translate(7,0,2);
+        modelMatrix.translate(cow.getX(),cow.getY(),cow.getZ());
         modelMatrix.scale(1.5f,1.5f,1.5f);
         modelMatrix.bind();
-        cow.draw();
-        modelMatrix.loadIdentity();
-        modelMatrix.translate(8,0,2);
-        modelMatrix.scale(0.8f,0.8f,0.8f);
-        modelMatrix.rotate(-30, 0, 1, 0);
-        modelMatrix.bind();
-        cow.draw();
-        
+        cow.getModel().draw();
+//        modelMatrix.loadIdentity();
+//        modelMatrix.translate(8,0,2);
+//        modelMatrix.scale(0.8f,0.8f,0.8f);
+//        modelMatrix.rotate(-30, 0, 1, 0);
+//        modelMatrix.bind();
+//        cow.draw();
+//
         /* Desenho do OVNI */
 
         modelMatrix.loadIdentity();
@@ -152,24 +157,31 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.rotate(dz*5, 1, 0, 0);
         modelMatrix.rotate(dx*5, 0, 0, 1);
         modelMatrix.bind();
-        ufo.draw();
+        ufo.getModel().draw();
     }
     
     @Override
     public void keyPressed(KeyEvent e) {
 
         switch (e.getKeyCode()) {
+            case KeyEvent.VK_SPACE: // abduz a vaca
+                cow.uprise(ufo);
+                break;
             case KeyEvent.VK_UP://gira sobre o eixo-x
                 dz -= 1;
+                ufo.move(0,0,-1);
                 break;
             case KeyEvent.VK_DOWN://gira sobre o eixo-x
                 dz += 1;
+                ufo.move(0,0,1);
                 break;
             case KeyEvent.VK_LEFT://gira sobre o eixo-y
                 dx -= 1;
+                ufo.move(-1,0,0);
                 break;
             case KeyEvent.VK_RIGHT://gira sobre o eixo-y
                 dx += 1;
+                ufo.move(1,0,0);
                 break;
         }
     }
