@@ -44,9 +44,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         projectionMatrix = new Matrix4();
         viewMatrix = new Matrix4();
         light = new Light();
-        cow = new JWavefrontObject(new File("C:\\Users\\Hikari Kyuubi\\Documents\\GitStuff\\farmhover\\FarmHover\\models\\newCow.obj"));
-        ufo = new JWavefrontObject(new File("C:\\Users\\Hikari Kyuubi\\Documents\\GitStuff\\farmhover\\FarmHover\\models\\UFO.obj"));
-        farm = new JWavefrontObject(new File("C:\\Users\\Hikari Kyuubi\\Documents\\GitStuff\\farmhover\\FarmHover\\models\\farm.obj"));
+        cow = new JWavefrontObject(new File("C:\\Users\\mtgom\\Documents\\USP\\Semestre20161\\CG\\farmhover\\FarmHover\\models\\newCow.obj"));
+        ufo = new JWavefrontObject(new File("C:\\Users\\mtgom\\Documents\\USP\\Semestre20161\\CG\\farmhover\\FarmHover\\models\\UFO.obj"));
+        farm = new JWavefrontObject(new File("C:\\Users\\mtgom\\Documents\\USP\\Semestre20161\\CG\\farmhover\\FarmHover\\models\\farm.obj"));
         delta = 5f;
         dx = dz = 0f;
     }
@@ -97,9 +97,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
         }
-  
-        
-        
+
+        light.bind();
     }
     
     @Override // Chamado pelo animator
@@ -108,31 +107,31 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-        
+
+        // Carrega a matriz de projeção perspectiva
         projectionMatrix.loadIdentity();
-        projectionMatrix.ortho(
-            -delta, delta, 
-            -delta, delta, 
-            -2 * delta, 2 * delta);
+        projectionMatrix.perspective(45.0f, 1.0f, 0.1f, 100.0f);
         projectionMatrix.bind();
+
+        // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-            1, 1, 1, 
-            0, 0, 0, 
-            0, 1, 0);
+                dx, 5, dz + 10,
+                dx, 0, dz,
+                0, 1, 0);
         viewMatrix.bind();
-        light.bind();
-        
+
         /* Desenho da fazenda */
         modelMatrix.loadIdentity();
         modelMatrix.translate(0, 0, 0);
-        modelMatrix.scale(8, 8, 8);
-        modelMatrix.rotate(45, 0, 1, 0);
+        modelMatrix.scale(20, 20, 20);
+       // modelMatrix.rotate(45, 0, 1, 0);
         modelMatrix.bind();
  
         farm.draw();
-        
+
         /* Desenho das vacas */
+        /*
         modelMatrix.loadIdentity();
         modelMatrix.translate(7,0,2);
         modelMatrix.scale(1.5f,1.5f,1.5f);
@@ -146,11 +145,12 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         cow.draw();
         
         /* Desenho do OVNI */
+
         modelMatrix.loadIdentity();
         modelMatrix.translate(dx,2,dz);
-        modelMatrix.scale(3.5f,3.5f,3.5f);
-        modelMatrix.rotate(dx*5, 1, 0, 0);
-        modelMatrix.rotate(dz*5, 0, 0, 1);
+        modelMatrix.scale(1.5f,1.5f,1.5f);
+        modelMatrix.rotate(dz*5, 1, 0, 0);
+        modelMatrix.rotate(dx*5, 0, 0, 1);
         modelMatrix.bind();
         ufo.draw();
     }
@@ -160,16 +160,16 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         switch (e.getKeyCode()) {
             case KeyEvent.VK_UP://gira sobre o eixo-x
-                dx -= 1;
+                dz -= 1;
                 break;
             case KeyEvent.VK_DOWN://gira sobre o eixo-x
-                dx += 1; 
+                dz += 1;
                 break;
             case KeyEvent.VK_LEFT://gira sobre o eixo-y
-                dz += 1; 
+                dx -= 1;
                 break;
             case KeyEvent.VK_RIGHT://gira sobre o eixo-y
-                dz -= 1; 
+                dx += 1;
                 break;
         }
     }
