@@ -39,7 +39,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final Matrix4 viewMatrix;
     private final Light light;
     private final JWavefrontObject farm;
-    private float delta, dx, dz;
+    private float delta, dx, dz,aspectRatio;
     private Ufo ufo;
     private Cow cow;
     
@@ -91,6 +91,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         ufo.init(glad,shader);
         cow.init(glad, shader);
+        cow.getModel().unitize();
 
         try {
             //init the model
@@ -115,7 +116,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         // Carrega a matriz de projeção perspectiva
         projectionMatrix.loadIdentity();
-        projectionMatrix.perspective(45.0f, 1.0f, 0.1f, 100.0f);
+        //usar o aspectRatio para manter a proporcao dos objetos
+        projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 100.0f);
         projectionMatrix.bind();
 
         // Carrega a camera para acompanhar o OVNI
@@ -188,10 +190,16 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     
     @Override
     public void dispose(GLAutoDrawable glad) {
+        ufo.getModel().dispose();
+        cow.getModel().dispose();
         
     }
 
 
     @Override
-    public void reshape(GLAutoDrawable glad, int i, int i1, int i2, int i3) {}
+    public void reshape(GLAutoDrawable glad, int x, int y, int width, int height) {
+        GL3 gl = glad.getGL().getGL3();
+        gl.glViewport(0, 0, width, height); // update the viewport
+        aspectRatio = (float)width/(float)(height);//uptdate aspectratio para usar na matriz de projecao
+    }
 }
