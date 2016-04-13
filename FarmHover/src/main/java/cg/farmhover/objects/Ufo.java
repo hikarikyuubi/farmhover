@@ -7,7 +7,6 @@ import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import java.io.File;
 import java.io.IOException;
-import java.lang.Math.*;
 
 public class Ufo {
 
@@ -60,15 +59,15 @@ public class Ufo {
     }
     
     public void move(int x, int y, int z) {
-        this.x += x*moveVel;
-        this.y += y*moveVel;
-        this.z += z*moveVel;
+        this.x += x * moveVel;
+        this.y += y * moveVel;
+        this.z += z * moveVel;
     }
 
     public void rotate(int x, int y, int z) {
         this.rx = (this.rx + x * flipDeg) % 360;
-        this.ry = (this.ry + y*flipDeg) % 360;
-        this.rz = (this.rz + z*flipDeg) % 360;
+        this.ry = (this.ry + y * flipDeg) % 360;
+        this.rz = (this.rz + z * flipDeg) % 360;
     }
     
     public float getX() {

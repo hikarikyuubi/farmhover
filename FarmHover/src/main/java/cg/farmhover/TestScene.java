@@ -39,7 +39,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final Matrix4 viewMatrix;
     private final Light light;
     private final JWavefrontObject farm;
-    private float delta, dx, dz,aspectRatio;
+    private float delta, aspectRatio;
     private Ufo ufo;
     private Cow cow;
     
@@ -122,7 +122,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-                ufo.getX() + 10, ufo.getY() + 10, ufo.getZ() + 10,
+                ufo.getX() + 10, ufo.getY() + 10, ufo.getZ() + 10, // Arranjar forma de acompanhar a rotação da nave depois
                 ufo.getX(), ufo.getY(), ufo.getZ(),
                 0, 1, 0);
         viewMatrix.bind();
@@ -156,29 +156,19 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     public void keyPressed(KeyEvent e) {
 
         switch (e.getKeyCode()) {
+            /* UFO navigation */
             case KeyEvent.VK_SHIFT: // abduz a vaca
                 cow.uprise(ufo);
                 break;
             case KeyEvent.VK_SPACE:
                 ufo.move(1, 0);
-            case KeyEvent.VK_UP:
-                ufo.move(0, 0, -1);
-                break;
-            case KeyEvent.VK_DOWN:
-                ufo.move(0, 0, 1);
-                break;
-            case KeyEvent.VK_LEFT:
-                ufo.move(-1, 0, 0);
-                break;
-            case KeyEvent.VK_RIGHT:
-                ufo.move(1, 0, 0);
-                break;
             case KeyEvent.VK_W:
                 ufo.move(0, 1);
                 break;
             case KeyEvent.VK_S:
                 ufo.move(0, -1);
                 break;
+            /* UFO rotation */
             case KeyEvent.VK_A:
                 ufo.rotate(0, -1, 0);
                 break;
@@ -197,8 +187,21 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             case KeyEvent.VK_X:
                 ufo.rotate(-1, 0, 0);
                 break;
+            /* old movement */
+            case KeyEvent.VK_UP:
+                ufo.move(0, 0, -1);
+                break;
+            case KeyEvent.VK_DOWN:
+                ufo.move(0, 0, 1);
+                break;
+            case KeyEvent.VK_LEFT:
+                ufo.move(-1, 0, 0);
+                break;
+            case KeyEvent.VK_RIGHT:
+                ufo.move(1, 0, 0);
+                break;
            
-           /* -> ideal cenary like bellow
+           /* -> ideal cenary like bellow -> more than 1 key pressed
            int forward, moveY, rX, rY, rZ;
             if (KeyEvent.VK_SHIFT) // abduz a vaca
                 cow.uprise(ufo);
