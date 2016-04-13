@@ -14,11 +14,11 @@ public class Ufo {
     private float x, y, z; // posição
     private float rx, ry, rz; // rotação
     private float moveVel, flipDeg; // bases
-
+    
     public Ufo() {
         rx = ry = rz = x = y = z = 0f;
-        moveVel = 1f;
-        flipDeg = 45f;
+        moveVel = 0.25f;
+        flipDeg = 5f;
         model = new JWavefrontObject(new File(".\\models\\UFO.obj"));
     }
 
@@ -49,8 +49,8 @@ public class Ufo {
     public void move(int forward, int moveY) {
         this.y += (moveY * this.moveVel);
         if (forward == 1) {
-            this.x += (roundDec(Math.cos(Math.toRadians(ry)), 3) * this.moveVel);
-            this.z += (roundDec(Math.sin(Math.toRadians(ry)), 3) * this.moveVel);
+            this.x += (roundDec(Math.sin(Math.toRadians(ry)), 3) * this.moveVel);
+            this.z += -1*(roundDec(Math.cos(Math.toRadians(ry)), 3) * this.moveVel);
         }
     }
     
@@ -88,5 +88,10 @@ public class Ufo {
 
     public float getRz() {
         return this.rz;
+    }
+    
+    public float getLookat(char axis) {
+        if (axis == 'x') return -1*roundDec(Math.sin(Math.toRadians(ry)), 3);
+        return roundDec(Math.cos(Math.toRadians(ry)), 3);
     }
 }

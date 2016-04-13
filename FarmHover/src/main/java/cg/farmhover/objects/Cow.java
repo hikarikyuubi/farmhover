@@ -12,7 +12,7 @@ public class Cow {
 
     private JWavefrontObject model;
     private float x,y,z;
-    public Cow(int x, int y, int z) {
+    public Cow(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -55,7 +55,7 @@ public class Cow {
         this.z += z;
     }
     public void uprise(Ufo ufo){
-        if (y < ufo.getZ()){
+        if (y < ufo.getY()){
             y += 0.01f;
         }
     }

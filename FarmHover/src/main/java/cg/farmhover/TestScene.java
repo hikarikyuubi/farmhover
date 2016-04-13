@@ -49,9 +49,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         projectionMatrix = new Matrix4();
         viewMatrix = new Matrix4();
         light = new Light();
-        cow = new Cow(1,0,1);
+        cow = new Cow(0, 0.5f, 0);
         ufo = new Ufo();
-        farm = new JWavefrontObject(new File(".\\models\\plain.obj"));
+        farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         delta = 5f;
     }
     
@@ -81,14 +81,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix.init(gl, shader.getUniformLocation("u_viewMatrix"));
         
         //init the light
-        light.setPosition(new float[]{10, 10, 50, 1.0f});
+        light.setPosition(new float[]{0, 10, -50, 1.0f});
         light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
         light.setDiffuseColor(new float[]{0.75f, 0.75f, 0.75f, 1.0f});
         light.setSpecularColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
         light.init(gl, shader);
 
 
-        ufo.init(glad,shader);
+        ufo.init(glad, shader);
         cow.init(glad, shader);
         cow.getModel().unitize();
 
@@ -122,7 +122,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-                ufo.getX() + 10, ufo.getY() + 10, ufo.getZ() + 10, // Arranjar forma de acompanhar a rotação da nave depois
+                ufo.getX() + 10*ufo.getLookat('x'), ufo.getY() + 10, ufo.getZ() + 10*ufo.getLookat('z'), // Arranjar forma de acompanhar a rotação da nave depois;
                 ufo.getX(), ufo.getY(), ufo.getZ(),
                 0, 1, 0);
         viewMatrix.bind();
@@ -131,7 +131,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         /* Desenho da fazenda */
         modelMatrix.loadIdentity();
-        modelMatrix.scale(1000, 1000,1000);
+        modelMatrix.translate(0, -1f, 0);
+        modelMatrix.scale(50, 1, 50);
         modelMatrix.bind();
         farm.draw();
 
@@ -146,11 +147,11 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
         modelMatrix.scale(3f,3f,3f);
         modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
-        modelMatrix.rotate(ufo.getRy(), 0, 1, 0);
+        //modelMatrix.rotate(ufo.getRy(), 0, 1, 0);
         modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
         modelMatrix.bind();
         ufo.getModel().draw();
-        System.err.println("X, Y, Z = " + ufo.getX() + " " + ufo.getY() + " " + ufo.getZ());
+        System.err.println("X, Y, Z, ry= " + (ufo.getX() + 10*ufo.getLookat('x')) + " "+(ufo.getY() + 10) + " " + (ufo.getZ() + 10*ufo.getLookat('z')) + " " + ufo.getRy());
     }
     
     @Override
@@ -158,7 +159,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         switch (e.getKeyCode()) {
             /* UFO navigation */
-            case KeyEvent.VK_SHIFT: // abduz a vaca
+            case KeyEvent.VK_Z: // abduz a vaca
                 cow.uprise(ufo);
                 break;
             case KeyEvent.VK_SPACE:
