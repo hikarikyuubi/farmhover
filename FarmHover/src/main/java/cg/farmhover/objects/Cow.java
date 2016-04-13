@@ -22,15 +22,15 @@ public class Cow {
     }
 
     public float getX() {
-        return x;
+        return this.x;
     }
 
     public float getY() {
-        return y;
+        return this.y;
     }
 
     public float getZ() {
-        return z;
+        return this.z;
     }
 
     public void init(GLAutoDrawable glad, Shader shader) {
@@ -55,8 +55,8 @@ public class Cow {
         this.z += z;
     }
     public void uprise(Ufo ufo){
-        if(y<ufo.getZ()){
-            y+=0.01f;
+        if (y < ufo.getZ()){
+            y += 0.01f;
         }
     }
 }

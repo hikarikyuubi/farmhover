@@ -127,37 +127,28 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 dx, 0, dz,
                 0, 1, 0);
         viewMatrix.bind();
-
+        
+        /* Elementos fixos do cenário */
+        
         /* Desenho da fazenda */
         modelMatrix.loadIdentity();
-        modelMatrix.translate(0, 0, 0);
         modelMatrix.scale(1000, 1000,1000);
-       // modelMatrix.rotate(45, 0, 1, 0);
         modelMatrix.bind();
- 
         farm.draw();
 
         /* Desenho das vacas */
-
         modelMatrix.loadIdentity();
         modelMatrix.translate(cow.getX(),cow.getY(),cow.getZ());
-        modelMatrix.scale(1.5f,1.5f,1.5f);
         modelMatrix.bind();
         cow.getModel().draw();
-//        modelMatrix.loadIdentity();
-//        modelMatrix.translate(8,0,2);
-//        modelMatrix.scale(0.8f,0.8f,0.8f);
-//        modelMatrix.rotate(-30, 0, 1, 0);
-//        modelMatrix.bind();
-//        cow.draw();
-//
-        /* Desenho do OVNI */
 
+        /* Desenho do OVNI */
         modelMatrix.loadIdentity();
-        modelMatrix.translate(dx,2,dz);
-        modelMatrix.scale(1.5f,1.5f,1.5f);
-        modelMatrix.rotate(dz*5, 1, 0, 0);
-        modelMatrix.rotate(dx*5, 0, 0, 1);
+        modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
+        modelMatrix.scale(3f,3f,3f);
+        modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
+        modelMatrix.rotate(ufo.getRy(), 0, 1, 0);
+        modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
         modelMatrix.bind();
         ufo.getModel().draw();
     }
@@ -166,25 +157,48 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     public void keyPressed(KeyEvent e) {
 
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_SPACE: // abduz a vaca
+            case KeyEvent.VK_SHIFT: // abduz a vaca
                 cow.uprise(ufo);
                 break;
+            case KeyEvent.VK_SPACE:
+                ufo.move(0, 0, 1);
             case KeyEvent.VK_UP://gira sobre o eixo-x
-                dz -= 1;
                 ufo.move(0,0,-1);
                 break;
             case KeyEvent.VK_DOWN://gira sobre o eixo-x
-                dz += 1;
                 ufo.move(0,0,1);
                 break;
             case KeyEvent.VK_LEFT://gira sobre o eixo-y
-                dx -= 1;
                 ufo.move(-1,0,0);
                 break;
             case KeyEvent.VK_RIGHT://gira sobre o eixo-y
-                dx += 1;
                 ufo.move(1,0,0);
                 break;
+            case KeyEvent.VK_W:
+                ufo.move(0,1,0);
+                break;
+            case KeyEvent.VK_S:
+                ufo.move(0,-1,0);
+                break;
+            case KeyEvent.VK_A:
+                ufo.rotate(0,1,0);
+                break;
+            case KeyEvent.VK_D:
+                ufo.rotate(0,-1,0);
+                break;
+            case KeyEvent.VK_Q:
+                ufo.rotate(0,0,1);
+                break;
+            case KeyEvent.VK_E:
+                ufo.rotate(0,0,-1);
+                break;
+            case KeyEvent.VK_2:
+                ufo.rotate(1,0,0);
+                break;
+            case KeyEvent.VK_X:
+                ufo.rotate(-1, 0, 0);
+                break;
+           
         }
     }
     
@@ -194,7 +208,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         cow.getModel().dispose();
         
     }
-
 
     @Override
     public void reshape(GLAutoDrawable glad, int x, int y, int width, int height) {
