@@ -150,6 +150,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
         modelMatrix.bind();
         ufo.getModel().draw();
+        System.err.println("X, Y, Z = " + ufo.getX() + " " + ufo.getY() + " " + ufo.getZ());
     }
     
     @Override

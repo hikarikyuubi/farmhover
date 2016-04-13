@@ -47,27 +47,25 @@ public class Ufo {
     }
 
     public void move(int forward, int moveY) {
-        this.y += moveY * moveVel;
+        this.y += (moveY * this.moveVel);
         if (forward == 1) {
-            this.x += (moveVel * roundDec(Math.cos(Math.toRadians(ry)), 3));
-            this.z += (moveVel * roundDec(Math.sin(Math.toRadians(ry)), 3));
+            this.x += (roundDec(Math.cos(Math.toRadians(ry)), 3) * this.moveVel);
+            this.z += (roundDec(Math.sin(Math.toRadians(ry)), 3) * this.moveVel);
             
-            System.err.println("Ry = " + ry + "dec, so z is = " 
-                    + roundDec(Math.sin(Math.toRadians(ry)), 3) + " and new z = " + this.z + " while x is " + 
-                   roundDec(Math.cos(Math.toRadians(ry)), 3) + " and new x = " + this.x);
+            
         }
     }
     
     public void move(int x, int y, int z) {
-        this.x += x * moveVel;
-        this.y += y * moveVel;
-        this.z += z * moveVel;
+        this.x += x * this.moveVel;
+        this.y += y * this.moveVel;
+        this.z += z * this.moveVel;
     }
 
     public void rotate(int x, int y, int z) {
-        this.rx = (this.rx + x * flipDeg) % 360;
-        this.ry = (this.ry + y * flipDeg) % 360;
-        this.rz = (this.rz + z * flipDeg) % 360;
+        this.rx = (this.rx + x * this.flipDeg) % 360;
+        this.ry = (this.ry + y * this.flipDeg) % 360;
+        this.rz = (this.rz + z * this.flipDeg) % 360;
     }
     
     public float getX() {
