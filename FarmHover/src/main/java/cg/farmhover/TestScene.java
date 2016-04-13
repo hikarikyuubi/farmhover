@@ -53,7 +53,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         ufo = new Ufo();
         farm = new JWavefrontObject(new File(".\\models\\plain.obj"));
         delta = 5f;
-        dx = dz = 0f;
     }
     
     @Override // Configura a inicialização
@@ -123,8 +122,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-                dx, 1,dz + 10,
-                dx, 0, dz,
+                ufo.getX() + 10, ufo.getY() + 10, ufo.getZ() + 10,
+                ufo.getX(), ufo.getY(), ufo.getZ(),
                 0, 1, 0);
         viewMatrix.bind();
         
@@ -161,44 +160,70 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 cow.uprise(ufo);
                 break;
             case KeyEvent.VK_SPACE:
+                ufo.move(1, 0);
+            case KeyEvent.VK_UP:
+                ufo.move(0, 0, -1);
+                break;
+            case KeyEvent.VK_DOWN:
                 ufo.move(0, 0, 1);
-            case KeyEvent.VK_UP://gira sobre o eixo-x
-                ufo.move(0,0,-1);
                 break;
-            case KeyEvent.VK_DOWN://gira sobre o eixo-x
-                ufo.move(0,0,1);
+            case KeyEvent.VK_LEFT:
+                ufo.move(-1, 0, 0);
                 break;
-            case KeyEvent.VK_LEFT://gira sobre o eixo-y
-                ufo.move(-1,0,0);
-                break;
-            case KeyEvent.VK_RIGHT://gira sobre o eixo-y
-                ufo.move(1,0,0);
+            case KeyEvent.VK_RIGHT:
+                ufo.move(1, 0, 0);
                 break;
             case KeyEvent.VK_W:
-                ufo.move(0,1,0);
+                ufo.move(0, 1);
                 break;
             case KeyEvent.VK_S:
-                ufo.move(0,-1,0);
+                ufo.move(0, -1);
                 break;
             case KeyEvent.VK_A:
-                ufo.rotate(0,1,0);
+                ufo.rotate(0, -1, 0);
                 break;
             case KeyEvent.VK_D:
-                ufo.rotate(0,-1,0);
+                ufo.rotate(0, 1, 0);
                 break;
             case KeyEvent.VK_Q:
-                ufo.rotate(0,0,1);
+                ufo.rotate(0, 0, 1);
                 break;
             case KeyEvent.VK_E:
-                ufo.rotate(0,0,-1);
+                ufo.rotate(0, 0, -1);
                 break;
             case KeyEvent.VK_2:
-                ufo.rotate(1,0,0);
+                ufo.rotate(1, 0, 0);
                 break;
             case KeyEvent.VK_X:
                 ufo.rotate(-1, 0, 0);
                 break;
            
+           /* -> ideal cenary like bellow
+           int forward, moveY, rX, rY, rZ;
+            if (KeyEvent.VK_SHIFT) // abduz a vaca
+                cow.uprise(ufo);
+            if (KeyEvent.VK_SPACE)
+                forward = 1;
+            if (KeyEvent.VK_W)
+                moveY = 1;
+            if (KeyEvent.VK_S)
+                moveY = -1;
+            if (KeyEvent.VK_A)
+                rY = 1;
+            if (KeyEvent.VK_D)
+                rY = -1;
+            if (KeyEvent.VK_Q)
+                rZ = 1;
+            if (KeyEvent.VK_E)
+                rZ = -1;
+            if (KeyEvent.VK_2)
+                rX = 1;
+            if (KeyEvent.VK_X)
+                rX = -1;
+
+            ufo.rotate(rX, rY, rZ);
+            ufo.move(forward, moveY);
+            */
         }
     }
     
