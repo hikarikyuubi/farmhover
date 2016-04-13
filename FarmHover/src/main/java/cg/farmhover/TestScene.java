@@ -163,6 +163,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 break;
             case KeyEvent.VK_SPACE:
                 ufo.move(1, 0);
+                break;
             case KeyEvent.VK_W:
                 ufo.move(0, 1);
                 break;

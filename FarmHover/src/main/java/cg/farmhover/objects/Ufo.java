@@ -51,8 +51,6 @@ public class Ufo {
         if (forward == 1) {
             this.x += (roundDec(Math.cos(Math.toRadians(ry)), 3) * this.moveVel);
             this.z += (roundDec(Math.sin(Math.toRadians(ry)), 3) * this.moveVel);
-            
-            
         }
     }
     
