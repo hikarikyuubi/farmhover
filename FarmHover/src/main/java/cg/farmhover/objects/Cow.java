@@ -16,6 +16,8 @@ public class Cow {
         this.x = x;
         this.y = y;
         this.z = z;
+        // descomentar a linha abaixo e comentar a seguinte para usar a vaca com textura
+        //model = new JWavefrontObject(new File(".\\models\\cow.obj"));
         model = new JWavefrontObject(new File(".\\models\\newCow.obj"));
     }
 
