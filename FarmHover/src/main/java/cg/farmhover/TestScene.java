@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.opengl.GL;
@@ -45,9 +46,13 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     public static ArrayList<Cow> cows;
     private Cow risingCow;
     private float floatingSpeed;
+    private BitSet keyBits;
+    private Updater updater;
     
     
     public TestScene() {
+        keyBits = new BitSet(256);
+        updater = new Updater();
         shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
         modelMatrix = new Matrix4();
         projectionMatrix = new Matrix4();
@@ -122,7 +127,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-
+        updater.movementApplier(keyBits, ufo);
         // Carrega a matriz de projeção perspectiva
         projectionMatrix.loadIdentity();
         //usar o aspectRatio para manter a proporcao dos objetos
@@ -168,19 +173,41 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         floatingSpeed += 2;
         //System.err.println("X, Y, Z, ry= " + (ufo.getX() + 10*ufo.getLookat('x')) + " "+(ufo.getY() + 10) + " " + (ufo.getZ() + 10*ufo.getLookat('z')) + " " + ufo.getRy());
     }
-    
+
     @Override
-    public void keyReleased(KeyEvent e){
-         switch (e.getKeyCode()) {
-             case KeyEvent.VK_SHIFT:
-                if(risingCow!=null){
-                    risingCow.rising = false;
-                    risingCow = null;
+    public void keyPressed(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+                
+        if (keyCode == KeyEvent.VK_SHIFT) {
+            System.out.println(ufo.getX() + ":" + ufo.getZ());
+            float ux= ufo.getX();
+            float uz = ufo.getZ();
+            for(int i = 0; i < cows.size(); ++i){
+                if(cows.get(i).getX()==ux && cows.get(i).getZ()==uz){
+                    cows.get(i).uprise(ufo);
+                    risingCow = cows.get(i);
+                    break;
                 }
-                break;
-         }
+            }
+        }
+        else keyBits.set(keyCode);
     }
-    
+
+    @Override
+    public void keyReleased(KeyEvent event) {
+        int keyCode = event.getKeyCode();
+       
+        if (keyCode == KeyEvent.VK_SHIFT) {
+            if(risingCow != null){
+                risingCow.rising = false;
+                risingCow = null;
+            }
+        }
+        else  keyBits.clear(keyCode);
+                
+    }
+ 
+    /*
     @Override
     public void keyPressed(KeyEvent e) {
 
@@ -197,7 +224,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                     }
                 }
                 break;
-            /* UFO navigation */
+             UFO navigation 
             case KeyEvent.VK_SPACE:
                 ufo.move(1, 0);
                 break;
@@ -207,7 +234,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             case KeyEvent.VK_S:
                 ufo.move(0, -1);
                 break;
-            /* UFO rotation */
+             UFO rotation 
             case KeyEvent.VK_A:
                 ufo.rotate(0, -1, 0);
                 break;
@@ -226,7 +253,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             case KeyEvent.VK_X:
                 ufo.rotate(-1, 0, 0);
                 break;
-            /* old movement */
+             old movement 
             case KeyEvent.VK_UP:
                 ufo.move(0, 0, -1);
                 break;
@@ -239,35 +266,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             case KeyEvent.VK_RIGHT:
                 ufo.move(1, 0, 0);
                 break;
-           
-           /* -> ideal cenary like bellow -> more than 1 key pressed
-           int forward, moveY, rX, rY, rZ;
-            if (KeyEvent.VK_SHIFT) // abduz a vaca
-                cow.uprise(ufo);
-            if (KeyEvent.VK_SPACE)
-                forward = 1;
-            if (KeyEvent.VK_W)
-                moveY = 1;
-            if (KeyEvent.VK_S)
-                moveY = -1;
-            if (KeyEvent.VK_A)
-                rY = 1;
-            if (KeyEvent.VK_D)
-                rY = -1;
-            if (KeyEvent.VK_Q)
-                rZ = 1;
-            if (KeyEvent.VK_E)
-                rZ = -1;
-            if (KeyEvent.VK_2)
-                rX = 1;
-            if (KeyEvent.VK_X)
-                rX = -1;
-
-            ufo.rotate(rX, rY, rZ);
-            ufo.move(forward, moveY);
-            */
         }
-    }
+    }*/
     
     @Override
     public void dispose(GLAutoDrawable glad) {
