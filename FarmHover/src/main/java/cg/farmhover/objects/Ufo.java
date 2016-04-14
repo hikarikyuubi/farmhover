@@ -1,14 +1,9 @@
 package cg.farmhover.objects;
 
-import cg.farmhover.gl.jWaveFront.JWavefrontObject;
-import cg.farmhover.gl.util.Shader;
-
-import javax.media.opengl.GL3;
-import javax.media.opengl.GLAutoDrawable;
+import cg.farmhover.Model;
 import java.io.File;
-import java.io.IOException;
 
-public class Ufo extends Character {
+public class Ufo extends SceneObject {
     private float rx, ry, rz; // rotação
     private float moveVel, flipDeg; // bases
     
@@ -17,7 +12,7 @@ public class Ufo extends Character {
         y = 8f;
         moveVel = 0.25f;
         flipDeg = 5f;
-        model = new JWavefrontObject(new File(".\\models\\UFO.obj"));
+        model = new Model(new File(".\\models\\UFO.obj"));
     }
     
     private float roundDec(double number, int decimal) {

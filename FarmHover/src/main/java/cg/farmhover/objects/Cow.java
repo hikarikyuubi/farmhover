@@ -1,10 +1,10 @@
 package cg.farmhover.objects;
 
+import cg.farmhover.Model;
 import cg.farmhover.TestScene;
-import cg.farmhover.gl.jWaveFront.JWavefrontObject;
 import java.io.File;
 
-public class Cow extends Character {
+public class Cow extends SceneObject {
     public boolean rising;
     float fallHeight;
     
@@ -14,7 +14,7 @@ public class Cow extends Character {
         this.z = z;
         // descomentar a linha abaixo e comentar a seguinte para usar a vaca com textura
         //model = new JWavefrontObject(new File(".\\models\\cow.obj"));
-        model = new JWavefrontObject(new File(".\\models\\newCow.obj"));
+        model = new Model(new File(".\\models\\newCow.obj"));
         rising = false;
     }
     

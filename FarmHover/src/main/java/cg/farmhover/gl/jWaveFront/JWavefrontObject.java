@@ -38,7 +38,7 @@ public class JWavefrontObject {
   private int is_texture_handle;
   private int texture_handle;
   private ArrayList<Group> groups;
-  private ArrayList<Vertex> vertices;
+  public ArrayList<Vertex> vertices;
   private ArrayList<Normal> normals;
   private ArrayList<Material> materials;
   private ArrayList<Texture> textures;
@@ -103,7 +103,7 @@ public class JWavefrontObject {
    *
    * @return Returns the scalefactor used.
    */
-  public float[] unitize() {
+  public void unitize() {
     assert (vertices != null);
 
     float maxx, minx, maxy, miny, maxz, minz;
@@ -170,11 +170,8 @@ public class JWavefrontObject {
       vertices.get(i).y *= scale;
       vertices.get(i).z *= scale;
     }
-    float[] res = {minx, miny, minz, maxx, maxy, maxz};
-    return res;
   }
 
-  
   /**
    * Reads a model description from a Wavefront.
    *
