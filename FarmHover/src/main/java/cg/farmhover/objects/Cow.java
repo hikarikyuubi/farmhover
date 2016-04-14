@@ -2,17 +2,9 @@ package cg.farmhover.objects;
 
 import cg.farmhover.TestScene;
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;
-import cg.farmhover.gl.util.Shader;
-
-import javax.media.opengl.GL3;
-import javax.media.opengl.GLAutoDrawable;
 import java.io.File;
-import java.io.IOException;
 
-public class Cow {
-
-    private JWavefrontObject model;
-    private float x,y,z;
+public class Cow extends Character {
     public boolean rising;
     float fallHeight;
     
@@ -25,41 +17,7 @@ public class Cow {
         model = new JWavefrontObject(new File(".\\models\\newCow.obj"));
         rising = false;
     }
-
-    public float getX() {
-        return this.x;
-    }
-
-    public float getY() {
-        return this.y;
-    }
-
-    public float getZ() {
-        return this.z;
-    }
-
-    public void init(GLAutoDrawable glad, Shader shader) {
-        // Get pipeline
-        GL3 gl = glad.getGL().getGL3();
-
-        try {
-            model.init(gl, shader);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        model.unitize();
-    }
-
-    public JWavefrontObject getModel() {
-        return model;
-    }
-
-    public void move(float x, float y, float z) {
-        this.x += x;
-        this.y += y;
-        this.z += z;
-    }
-   
+    
     public void uprise(Ufo ufo){
         rising = true;
         fallHeight = ufo.getY();
