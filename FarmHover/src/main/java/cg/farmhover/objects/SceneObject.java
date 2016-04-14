@@ -5,6 +5,7 @@
  */
 package cg.farmhover.objects;
 
+import cg.farmhover.Model;
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;
 import cg.farmhover.gl.util.Shader;
 import java.io.IOException;
@@ -15,10 +16,22 @@ import javax.media.opengl.GLAutoDrawable;
  *
  * @author Barbara
  */
-public class Character {
-    JWavefrontObject model;
+public class SceneObject {
+    Model model;
     float x,y,z;
-    float minx, miny, minz, maxx, maxy, maxz;
+    private float width, height, depth;
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
+    }
+
+    public void setDepth(float depth) {
+        this.depth = depth;
+    }
 
     public void init(GLAutoDrawable glad, Shader shader) {
         // Get pipeline
@@ -29,16 +42,12 @@ public class Character {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        float[] borders = model.unitize();
-        minx = borders[0];
-        miny = borders[1];
-        minz = borders[2];
-        maxx = borders[3];
-        maxy = borders[4];
-        maxz = borders[5];
+        model.unitize(this);
+        
+        System.err.println("======================> w:"+width+" h:"+height+" d:"+depth);
     }
 
-    public JWavefrontObject getModel() {
+    public Model getModel() {
         return model;
     }
 
@@ -61,29 +70,6 @@ public class Character {
         return this.z;
     }
     
-    public float getMinx() {
-        return minx;
-    }
-
-    public float getMiny() {
-        return miny;
-    }
-
-    public float getMinz() {
-        return minz;
-    }
-
-    public float getMaxx() {
-        return maxx;
-    }
-
-    public float getMaxy() {
-        return maxy;
-    }
-
-    public float getMaxz() {
-        return maxz;
-    }
 }
 
 
