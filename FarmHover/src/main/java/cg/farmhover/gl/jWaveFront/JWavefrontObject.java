@@ -103,7 +103,7 @@ public class JWavefrontObject {
    *
    * @return Returns the scalefactor used.
    */
-  public void unitize() {
+  public float[] unitize() {
     assert (vertices != null);
 
     float maxx, minx, maxy, miny, maxz, minz;
@@ -170,8 +170,11 @@ public class JWavefrontObject {
       vertices.get(i).y *= scale;
       vertices.get(i).z *= scale;
     }
+    float[] res = {minx, miny, minz, maxx, maxy, maxz};
+    return res;
   }
 
+  
   /**
    * Reads a model description from a Wavefront.
    *

@@ -18,7 +18,8 @@ import javax.media.opengl.GLAutoDrawable;
 public class Character {
     JWavefrontObject model;
     float x,y,z;
-    
+    float minx, miny, minz, maxx, maxy, maxz;
+
     public void init(GLAutoDrawable glad, Shader shader) {
         // Get pipeline
         GL3 gl = glad.getGL().getGL3();
@@ -28,7 +29,13 @@ public class Character {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        model.unitize();
+        float[] borders = model.unitize();
+        minx = borders[0];
+        miny = borders[1];
+        minz = borders[2];
+        maxx = borders[3];
+        maxy = borders[4];
+        maxz = borders[5];
     }
 
     public JWavefrontObject getModel() {
@@ -52,6 +59,30 @@ public class Character {
 
     public float getZ() {
         return this.z;
+    }
+    
+    public float getMinx() {
+        return minx;
+    }
+
+    public float getMiny() {
+        return miny;
+    }
+
+    public float getMinz() {
+        return minz;
+    }
+
+    public float getMaxx() {
+        return maxx;
+    }
+
+    public float getMaxy() {
+        return maxy;
+    }
+
+    public float getMaxz() {
+        return maxz;
     }
 }
 
