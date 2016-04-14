@@ -71,7 +71,7 @@ public class Cow {
     }
     
     public void applyGravity(){
-        if(rising==false && y>1){
+        if(!rising && y>1){
             y -= (fallHeight-y)*0.02f; // pra acelerar com o tempo 
         }
     }

@@ -44,6 +44,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private Ufo ufo;
     public static ArrayList<Cow> cows;
     private Cow risingCow;
+    private float floatingSpeed;
     
     
     public TestScene() {
@@ -59,6 +60,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         ufo = new Ufo();
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         delta = 5f;
+        floatingSpeed = 0f;
     }
     
     @Override // Configura a inicialização
@@ -145,12 +147,12 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         farm.draw();
 
         /* Desenho das vacas */
-        for(int i = 0; i<cows.size(); ++i){
-            cows.get(i).applyGravity();
+        for (Cow cow : cows) {
+            cow.applyGravity();
             modelMatrix.loadIdentity();
-            modelMatrix.translate(cows.get(i).getX(),cows.get(i).getY(),cows.get(i).getZ());
+            modelMatrix.translate(cow.getX(), cow.getY(), cow.getZ());
             modelMatrix.bind();
-            cows.get(i).getModel().draw();
+            cow.getModel().draw();
         }
 
         /* Desenho do OVNI */
@@ -160,8 +162,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
         //modelMatrix.rotate(ufo.getRy(), 0, 1, 0);
         modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
+        modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
         modelMatrix.bind();
         ufo.getModel().draw();
+        floatingSpeed += 2;
         //System.err.println("X, Y, Z, ry= " + (ufo.getX() + 10*ufo.getLookat('x')) + " "+(ufo.getY() + 10) + " " + (ufo.getZ() + 10*ufo.getLookat('z')) + " " + ufo.getRy());
     }
     
