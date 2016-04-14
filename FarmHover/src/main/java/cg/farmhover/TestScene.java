@@ -20,6 +20,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.opengl.GL;
@@ -41,7 +42,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final JWavefrontObject farm;
     private float delta, aspectRatio;
     private Ufo ufo;
-    private Cow cow;
+    public static ArrayList<Cow> cows;
+    private Cow risingCow;
+    
     
     public TestScene() {
         shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
@@ -49,7 +52,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         projectionMatrix = new Matrix4();
         viewMatrix = new Matrix4();
         light = new Light();
-        cow = new Cow(0, 0.5f, 0);
+        cows = new ArrayList();
+        for(int i = 0; i<15; ++i){
+            cows.add(new Cow(i*2,1,i)); // as posições são só pra teste (depois vou randomizar checando se não tem vaca no mesmo lugar)
+        }
         ufo = new Ufo();
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         delta = 5f;
@@ -89,8 +95,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
 
         ufo.init(glad, shader);
-        cow.init(glad, shader);
-        cow.getModel().unitize();
+         for(int i = 0; i<cows.size(); ++i){
+            cows.get(i).init(glad, shader);
+            cows.get(i).getModel().unitize();
+        }
 
         try {
             //init the model
@@ -137,10 +145,13 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         farm.draw();
 
         /* Desenho das vacas */
-        modelMatrix.loadIdentity();
-        modelMatrix.translate(cow.getX(),cow.getY(),cow.getZ());
-        modelMatrix.bind();
-        cow.getModel().draw();
+        for(int i = 0; i<cows.size(); ++i){
+            cows.get(i).applyGravity();
+            modelMatrix.loadIdentity();
+            modelMatrix.translate(cows.get(i).getX(),cows.get(i).getY(),cows.get(i).getZ());
+            modelMatrix.bind();
+            cows.get(i).getModel().draw();
+        }
 
         /* Desenho do OVNI */
         modelMatrix.loadIdentity();
@@ -151,17 +162,38 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
         modelMatrix.bind();
         ufo.getModel().draw();
-        System.err.println("X, Y, Z, ry= " + (ufo.getX() + 10*ufo.getLookat('x')) + " "+(ufo.getY() + 10) + " " + (ufo.getZ() + 10*ufo.getLookat('z')) + " " + ufo.getRy());
+        //System.err.println("X, Y, Z, ry= " + (ufo.getX() + 10*ufo.getLookat('x')) + " "+(ufo.getY() + 10) + " " + (ufo.getZ() + 10*ufo.getLookat('z')) + " " + ufo.getRy());
+    }
+    
+    @Override
+    public void keyReleased(KeyEvent e){
+         switch (e.getKeyCode()) {
+             case KeyEvent.VK_SHIFT:
+                if(risingCow!=null){
+                    risingCow.rising = false;
+                    risingCow = null;
+                }
+                break;
+         }
     }
     
     @Override
     public void keyPressed(KeyEvent e) {
 
         switch (e.getKeyCode()) {
-            /* UFO navigation */
-            case KeyEvent.VK_Z: // abduz a vaca
-                cow.uprise(ufo);
+            case KeyEvent.VK_SHIFT: // abduz a vaca
+                System.out.println(ufo.getX()+":"+ufo.getZ());
+                float ux= ufo.getX();
+                float uz = ufo.getZ();
+                for(int i = 0; i<cows.size(); ++i){
+                    if(cows.get(i).getX()==ux && cows.get(i).getZ()==uz){
+                        cows.get(i).uprise(ufo);
+                        risingCow = cows.get(i);
+                        break;
+                    }
+                }
                 break;
+            /* UFO navigation */
             case KeyEvent.VK_SPACE:
                 ufo.move(1, 0);
                 break;
@@ -236,8 +268,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable glad) {
         ufo.getModel().dispose();
-        cow.getModel().dispose();
-        
+        for(int i = 0; i<cows.size(); ++i){
+            cows.get(i).getModel().dispose();
+        }        
     }
 
     @Override

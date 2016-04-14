@@ -1,5 +1,6 @@
 package cg.farmhover.objects;
 
+import cg.farmhover.TestScene;
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;
 import cg.farmhover.gl.util.Shader;
 
@@ -12,6 +13,9 @@ public class Cow {
 
     private JWavefrontObject model;
     private float x,y,z;
+    public boolean rising;
+    float fallHeight;
+    
     public Cow(float x, float y, float z) {
         this.x = x;
         this.y = y;
@@ -19,6 +23,7 @@ public class Cow {
         // descomentar a linha abaixo e comentar a seguinte para usar a vaca com textura
         //model = new JWavefrontObject(new File(".\\models\\cow.obj"));
         model = new JWavefrontObject(new File(".\\models\\newCow.obj"));
+        rising = false;
     }
 
     public float getX() {
@@ -54,9 +59,20 @@ public class Cow {
         this.y += y;
         this.z += z;
     }
+   
     public void uprise(Ufo ufo){
-        if (y < ufo.getY()){
-            y += 0.01f;
+        rising = true;
+        fallHeight = ufo.getY();
+        if (y < ufo.getY()-2){
+            y += 0.02f;
+        } else {
+            TestScene.cows.remove(this);
+        }
+    }
+    
+    public void applyGravity(){
+        if(rising==false && y>1){
+            y -= (fallHeight-y)*0.02f; // pra acelerar com o tempo 
         }
     }
 }

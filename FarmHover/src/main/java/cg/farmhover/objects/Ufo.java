@@ -16,7 +16,8 @@ public class Ufo {
     private float moveVel, flipDeg; // bases
     
     public Ufo() {
-        rx = ry = rz = x = y = z = 0f;
+        rx = ry = rz = x = z = 0f;
+        y = 8f;
         moveVel = 0.25f;
         flipDeg = 5f;
         model = new JWavefrontObject(new File(".\\models\\UFO.obj"));
