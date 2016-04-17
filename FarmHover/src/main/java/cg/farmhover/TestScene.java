@@ -209,9 +209,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 
         if (keyCode == KeyEvent.VK_SHIFT) {
             System.out.println(ufo.getX()+":"+ufo.getZ());
-                float ux= ufo.getX();
+                float ux = ufo.getX();
                 float uz = ufo.getZ();
-                for(int i = 0; i<cows.size(); ++i){
+                for(int i = 0; i < cows.size(); ++i){
                     if(cows.get(i).isUnderUFO(ufo)){
                         cows.get(i).uprise(ufo);
                         risingCow = cows.get(i);
@@ -235,69 +235,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         else  keyBits.clear(keyCode);
                 
     }
- 
-    /*
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_SHIFT: // abduz a vaca
-                System.out.println(ufo.getX()+":"+ufo.getZ());
-                float ux= ufo.getX();
-                float uz = ufo.getZ();
-                for(int i = 0; i<cows.size(); ++i){
-//                    if(cows.get(i).getX()==ux && cows.get(i).getZ()==uz){
-                    if(cows.get(i).isUnderUFO(ufo)){
-                        cows.get(i).uprise(ufo);
-                        risingCow = cows.get(i);
-                        break;
-                    }
-                }
-                break;
-             UFO navigation 
-            case KeyEvent.VK_SPACE:
-                ufo.move(1, 0);
-                break;
-            case KeyEvent.VK_W:
-                ufo.move(0, 1);
-                break;
-            case KeyEvent.VK_S:
-                ufo.move(0, -1);
-                break;
-             UFO rotation 
-            case KeyEvent.VK_A:
-                ufo.rotate(0, -1, 0);
-                break;
-            case KeyEvent.VK_D:
-                ufo.rotate(0, 1, 0);
-                break;
-            case KeyEvent.VK_Q:
-                ufo.rotate(0, 0, 1);
-                break;
-            case KeyEvent.VK_E:
-                ufo.rotate(0, 0, -1);
-                break;
-            case KeyEvent.VK_2:
-                ufo.rotate(1, 0, 0);
-                break;
-            case KeyEvent.VK_X:
-                ufo.rotate(-1, 0, 0);
-                break;
-             old movement 
-            case KeyEvent.VK_UP:
-                ufo.move(0, 0, -0.25f);
-                break;
-            case KeyEvent.VK_DOWN:
-                ufo.move(0, 0, 0.25f);
-                break;
-            case KeyEvent.VK_LEFT:
-                ufo.move(-0.25f, 0, 0);
-                break;
-            case KeyEvent.VK_RIGHT:
-                ufo.move(0.25f, 0, 0);
-                break;
-        }
-    }*/
     
     @Override
     public void dispose(GLAutoDrawable glad) {
