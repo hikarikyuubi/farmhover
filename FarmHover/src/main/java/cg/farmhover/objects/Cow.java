@@ -23,6 +23,7 @@ public class Cow extends SceneObject {
         fallHeight = ufo.getY();
         if (y < ufo.getY()-2){
             y += 0.09f;
+            ry+=5;
         } else {
             TestScene.cows.remove(this);
         }
