@@ -38,7 +38,7 @@ public class Main {
         glCanvas.addGLEventListener(listener);
 
         Frame frame = new Frame("Test");
-        frame.setSize(600, 600);
+        frame.setSize(1024,768);
         frame.add(glCanvas);
         frame.addKeyListener(listener);
         final AnimatorBase animator = new FPSAnimator(glCanvas, 60);

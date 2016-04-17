@@ -21,6 +21,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.media.opengl.GL;
@@ -44,7 +45,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private Ufo ufo;
     public static ArrayList<Cow> cows;
     private Cow risingCow;
-    
+    private JWavefrontObject shadow;
     
     public TestScene() {
         shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
@@ -53,12 +54,23 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix = new Matrix4();
         light = new Light();
         cows = new ArrayList();
+        Random rand = new Random();
+        Cow cow;
         for(int i = 0; i<15; ++i){
-            cows.add(new Cow(i*2,1,i)); // as posições são só pra teste (depois vou randomizar checando se não tem vaca no mesmo lugar)
+            cow = new Cow(rand.nextInt(50)-25,1,rand.nextInt(50)-25); // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
+            cow.ry = rand.nextInt(360);
+            cows.add(cow); 
+            
         }
         ufo = new Ufo();
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
+        shadow = new JWavefrontObject(new File(".\\models\\shadow.obj"));
         delta = 5f;
+        
+        //========================== depois consertar =================
+        ufo.setScalex(3);
+        ufo.setScaley(3);
+        ufo.setScalez(3);
     }
     
     @Override // Configura a inicialização
@@ -87,7 +99,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix.init(gl, shader.getUniformLocation("u_viewMatrix"));
         
         //init the light
-        light.setPosition(new float[]{0, 10, -50, 1.0f});
+        light.setPosition(new float[]{0, 50, -50, 1.0f});
         light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
         light.setDiffuseColor(new float[]{0.75f, 0.75f, 0.75f, 1.0f});
         light.setSpecularColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
@@ -104,6 +116,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             //init the model
             farm.init(gl, shader);
             farm.unitize();
+//            shadow.init(gl, shader);
+//            shadow.unitize();
             //init the model
 
         } catch (IOException ex) {
@@ -143,12 +157,20 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.scale(50, 1, 50);
         modelMatrix.bind();
         farm.draw();
+        
+        // sombra
+//        modelMatrix.loadIdentity();
+//        modelMatrix.translate(ufo.getX(),2,ufo.getZ());
+//        modelMatrix.scale(3f,3f,3f);
+//        modelMatrix.bind();
+//        shadow.draw();
 
         /* Desenho das vacas */
         for(int i = 0; i<cows.size(); ++i){
             cows.get(i).applyGravity();
             modelMatrix.loadIdentity();
             modelMatrix.translate(cows.get(i).getX(),cows.get(i).getY(),cows.get(i).getZ());
+            modelMatrix.rotate(cows.get(i).getRy(), 0, 1, 0);
             modelMatrix.bind();
             cows.get(i).getModel().draw();
         }
@@ -186,7 +208,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 float ux= ufo.getX();
                 float uz = ufo.getZ();
                 for(int i = 0; i<cows.size(); ++i){
-                    if(cows.get(i).getX()==ux && cows.get(i).getZ()==uz){
+//                    if(cows.get(i).getX()==ux && cows.get(i).getZ()==uz){
+                    if(cows.get(i).isUnderUFO(ufo)){
                         cows.get(i).uprise(ufo);
                         risingCow = cows.get(i);
                         break;
@@ -224,16 +247,16 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 break;
             /* old movement */
             case KeyEvent.VK_UP:
-                ufo.move(0, 0, -1);
+                ufo.move(0, 0, -0.25f);
                 break;
             case KeyEvent.VK_DOWN:
-                ufo.move(0, 0, 1);
+                ufo.move(0, 0, 0.25f);
                 break;
             case KeyEvent.VK_LEFT:
-                ufo.move(-1, 0, 0);
+                ufo.move(-0.25f, 0, 0);
                 break;
             case KeyEvent.VK_RIGHT:
-                ufo.move(1, 0, 0);
+                ufo.move(0.25f, 0, 0);
                 break;
            
            /* -> ideal cenary like bellow -> more than 1 key pressed

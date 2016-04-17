@@ -4,7 +4,6 @@ import cg.farmhover.Model;
 import java.io.File;
 
 public class Ufo extends SceneObject {
-    private float rx, ry, rz; // rotação
     private float moveVel, flipDeg; // bases
     
     public Ufo() {
@@ -37,17 +36,7 @@ public class Ufo extends SceneObject {
         this.rz = (this.rz + z * this.flipDeg) % 360;
     }
     
-    public float getRx() {
-        return this.rx;
-    }
-
-    public float getRy() {
-        return this.ry;
-    }
-
-    public float getRz() {
-        return this.rz;
-    }
+  
     
     public float getLookat(char axis) {
         if (axis == 'x') return -1*roundDec(Math.sin(Math.toRadians(ry)), 3);

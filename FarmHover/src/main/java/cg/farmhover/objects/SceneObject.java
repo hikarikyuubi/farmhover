@@ -19,7 +19,48 @@ import javax.media.opengl.GLAutoDrawable;
 public class SceneObject {
     Model model;
     float x,y,z;
+    public float rx, ry, rz; // rotação ------------ depois mudar pra getters e setters
     private float width, height, depth;
+    private float scalex, scaley, scalez;
+
+    public float getScalex() {
+        return scalex;
+    }
+
+    public void setScalex(float scalex) {
+        //this.width*=scalex;
+        this.scalex = scalex;
+    }
+
+    public float getScaley() {
+        return scaley;
+    }
+
+    public void setScaley(float scaley) {
+        //this.height*=scaley;
+        this.scaley = scaley;
+    }
+
+    public float getScalez() {
+        return scalez;
+    }
+
+    public void setScalez(float scalez) {
+        //this.depth*=scalex;
+        this.scalez = scalez;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public float getDepth() {
+        return depth;
+    }
 
     public void setWidth(float width) {
         this.width = width;
@@ -69,7 +110,17 @@ public class SceneObject {
     public float getZ() {
         return this.z;
     }
-    
+      public float getRx() {
+        return this.rx;
+    }
+
+    public float getRy() {
+        return this.ry;
+    }
+
+    public float getRz() {
+        return this.rz;
+    }
 }
 
 
