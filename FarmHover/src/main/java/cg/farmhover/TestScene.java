@@ -8,8 +8,6 @@ package cg.farmhover;
 import cg.farmhover.gl.core.Light;
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;
 import cg.farmhover.gl.util.Matrix4;
-import cg.farmhover.models.SimpleModel;
-import cg.farmhover.models.WiredCube;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
 import cg.farmhover.gl.util.ShaderFactory.ShaderType;
@@ -45,7 +43,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private float delta, aspectRatio;
     private Ufo ufo;
     public static ArrayList<Cow> cows;
-    private Cow risingCow;
+    public static Cow risingCow;
     private JWavefrontObject shadow;
     private float floatingSpeed;
     private BitSet keyBits;
@@ -206,34 +204,21 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     @Override
     public void keyPressed(KeyEvent event) {
         int keyCode = event.getKeyCode();
-                
-        if (keyCode == KeyEvent.VK_SHIFT) {
-            System.out.println(ufo.getX()+":"+ufo.getZ());
-                float ux = ufo.getX();
-                float uz = ufo.getZ();
-                for(int i = 0; i < cows.size(); ++i){
-                    if(cows.get(i).isUnderUFO(ufo)){
-                        cows.get(i).uprise(ufo);
-                        risingCow = cows.get(i);
-                        break;
-                    }
-                }
-        }
-        else keyBits.set(keyCode);
+        keyBits.set(keyCode);
     }
 
     @Override
     public void keyReleased(KeyEvent event) {
         int keyCode = event.getKeyCode();
        
-        if (keyCode == KeyEvent.VK_SHIFT) {
+        if (keyCode == KeyEvent.VK_SPACE) {
             if(risingCow != null){
                 risingCow.rising = false;
                 risingCow = null;
             }
         }
-        else  keyBits.clear(keyCode);
-                
+        
+        keyBits.clear(keyCode);       
     }
     
     @Override

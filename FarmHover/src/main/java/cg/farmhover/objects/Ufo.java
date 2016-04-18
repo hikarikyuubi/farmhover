@@ -9,8 +9,8 @@ public class Ufo extends SceneObject {
     public Ufo() {
         rx = ry = rz = x = z = 0f;
         y = 8f;
-        moveVel = 0.25f;
-        flipDeg = 5f;
+        moveVel = 0.15f;
+        flipDeg = 1.5f;
         model = new Model(new File(".\\models\\UFO.obj"));
     }
     
@@ -22,11 +22,11 @@ public class Ufo extends SceneObject {
         return ((float) Math.round(number * roundPoint))/((float)roundPoint);
     }
 
-    public void move(int forward, int moveY) {
+    public void move(int direction, int moveY) {
         this.y += (moveY * this.moveVel);
-        if (forward == 1) {
-            this.x += (roundDec(Math.sin(Math.toRadians(ry)), 3) * this.moveVel);
-            this.z += -1*(roundDec(Math.cos(Math.toRadians(ry)), 3) * this.moveVel);
+        if(direction!=0){
+            this.x += (roundDec(Math.sin(Math.toRadians(ry)), 3) * direction * this.moveVel);
+            this.z += -1*(roundDec(Math.cos(Math.toRadians(ry)), 3) * direction * this.moveVel);
         }
     } 
 
