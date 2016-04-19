@@ -87,7 +87,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     public void init(GLAutoDrawable glad) {
         // Get pipeline
         GL3 gl = glad.getGL().getGL3();
-
         // Print OpenGL version
         System.out.println("OpenGL Version: " + gl.glGetString(GL.GL_VERSION) + "\n");
 
@@ -154,8 +153,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-                ufo.getX() + 10*ufo.getLookat('x'), ufo.getY() + 10, ufo.getZ() + 10*ufo.getLookat('z'), // Arranjar forma de acompanhar a rotação da nave depois;
-                ufo.getX(), ufo.getY(), ufo.getZ(),
+                ufo.getX() + 10*ufo.getLookat('x'), ufo.getY() + 6, ufo.getZ() + 10*ufo.getLookat('z'), // Arranjar forma de acompanhar a rotação da nave depois;
+                ufo.getX(), ufo.getY()-2, ufo.getZ(),
                 0, 1, 0);
         viewMatrix.bind();
         
