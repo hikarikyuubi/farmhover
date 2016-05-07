@@ -11,6 +11,7 @@ import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
 import cg.farmhover.gl.util.ShaderFactory.ShaderType;
+import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Ufo;
 
@@ -42,6 +43,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final JWavefrontObject farm;
     private float delta, aspectRatio;
     private Ufo ufo;
+    private Camera cam;
     public static ArrayList<Cow> cows;
     public static Cow risingCow;
     private JWavefrontObject shadow;
@@ -69,6 +71,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             
         }
         ufo = new Ufo();
+        cam = new Camera(ufo);
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         shadow = new JWavefrontObject(new File(".\\models\\shadow.obj"));
         delta = 5f;
@@ -144,7 +147,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-        updater.movementApplier(keyBits, ufo);
+        updater.movementApplier(keyBits, ufo, cam);
         // Carrega a matriz de projeção perspectiva
         projectionMatrix.loadIdentity();
         //usar o aspectRatio para manter a proporcao dos objetos
@@ -154,9 +157,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
         viewMatrix.lookAt(
-                ufo.getX() + 10*ufo.getLookat('x'), ufo.getY() + 10, ufo.getZ() + 10*ufo.getLookat('z'), // Arranjar forma de acompanhar a rotação da nave depois;
+                cam.getX(), cam.getY(), cam.getZ(),
                 ufo.getX(), ufo.getY(), ufo.getZ(),
-                0, 1, 0);
+                cam.getLookUpX(), cam.getLookUpY(), cam.getLookUpZ());
         viewMatrix.bind();
         
         /* Elementos fixos do cenário */
@@ -189,16 +192,16 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         /* Desenho do OVNI */
         modelMatrix.loadIdentity();
+        modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
         modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
         modelMatrix.scale(3f,3f,3f);
+        modelMatrix.rotate(ufo.getRy(), 0, 1, 0);
         modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
-        //modelMatrix.rotate(ufo.getRy(), 0, 1, 0);
         modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
-        modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
         modelMatrix.bind();
         ufo.getModel().draw();
         floatingSpeed += 2;
-        //System.err.println("X, Y, Z, ry= " + (ufo.getX() + 10*ufo.getLookat('x')) + " "+(ufo.getY() + 10) + " " + (ufo.getZ() + 10*ufo.getLookat('z')) + " " + ufo.getRy());
+       
     }
 
     @Override

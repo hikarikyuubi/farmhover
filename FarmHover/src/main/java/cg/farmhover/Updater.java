@@ -6,6 +6,7 @@
 package cg.farmhover;
 
 import static cg.farmhover.TestScene.cows;
+import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Ufo;
 import java.awt.event.KeyEvent;
 import java.util.BitSet;
@@ -20,7 +21,7 @@ public class Updater {
         
     }
     
-    public void movementApplier(BitSet keyBits, Ufo ufo) {
+    public void movementApplier(BitSet keyBits, Ufo ufo, Camera cam) {
         int direction = 0, moveY = 0, rX = 0, rY = 0, rZ = 0;
         
         if (keyBits.get(KeyEvent.VK_SPACE)){
@@ -36,33 +37,29 @@ public class Updater {
             }
         }
         if (keyBits.get(KeyEvent.VK_W))
-            moveY = 1;
+            moveY = 1; // arise
         if (keyBits.get(KeyEvent.VK_S))
-            moveY = -1;
-        if (keyBits.get(KeyEvent.VK_A))
-            rY = -1;
-        if (keyBits.get(KeyEvent.VK_D))
-            rY = 1;
+            moveY = -1; // descend
+        if (keyBits.get(KeyEvent.VK_A) || keyBits.get(KeyEvent.VK_LEFT))
+            rY = -1; // turn left
+        if (keyBits.get(KeyEvent.VK_D) || keyBits.get(KeyEvent.VK_RIGHT))
+            rY = 1; // turn right
         if (keyBits.get(KeyEvent.VK_Q))
-            rZ = 1;
+            rZ = 1; // flip to left
         if (keyBits.get(KeyEvent.VK_E))
-            rZ = -1;
+            rZ = -1; // flip to right
         if (keyBits.get(KeyEvent.VK_2))
-            rX = 1;
+            rX = 1; // flip frontward
         if (keyBits.get(KeyEvent.VK_X))
-            rX = -1;
-
-        // comandos alternativos (repete os movimentos acima)
+            rX = -1; // flip backward
         if (keyBits.get(KeyEvent.VK_UP))
-            direction = 1;
-        if (keyBits.get(KeyEvent.VK_LEFT))
-            rY = -1;
-        if (keyBits.get(KeyEvent.VK_RIGHT))
-            rY = 1;
+            direction = 1; // Move front
         if (keyBits.get(KeyEvent.VK_DOWN))
-            direction = -1;
+            direction = -1; // Move back
         //====================================================
         ufo.rotate(rX, rY, rZ);
         ufo.move(direction, moveY);
+        cam.updatePosition(ufo);
     }
+
 }
