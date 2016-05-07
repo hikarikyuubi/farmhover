@@ -23,6 +23,27 @@ public class SceneObject {
     private float width, height, depth;
     private float scalex, scaley, scalez;
 
+    public void init(GLAutoDrawable glad, Shader shader) {
+        // Get pipeline
+        GL3 gl = glad.getGL().getGL3();
+
+        try {
+            model.init(gl, shader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        model.unitize(this);
+        
+        System.err.println("======================> w:" + width 
+                           + " h:" + height + " d:"+depth);
+    }
+    
+    public void move(float x, float y, float z) {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+    }
+        
     public float getScalex() {
         return scalex;
     }
@@ -73,31 +94,10 @@ public class SceneObject {
     public void setDepth(float depth) {
         this.depth = depth;
     }
-
-    public void init(GLAutoDrawable glad, Shader shader) {
-        // Get pipeline
-        GL3 gl = glad.getGL().getGL3();
-
-        try {
-            model.init(gl, shader);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        model.unitize(this);
-        
-        System.err.println("======================> w:"+width+" h:"+height+" d:"+depth);
-    }
-
+    
     public Model getModel() {
         return model;
     }
-
-    public void move(float x, float y, float z) {
-        this.x += x;
-        this.y += y;
-        this.z += z;
-    }
-   
     
     public float getX() {
         return this.x;
@@ -110,7 +110,8 @@ public class SceneObject {
     public float getZ() {
         return this.z;
     }
-      public float getRx() {
+    
+    public float getRx() {
         return this.rx;
     }
 

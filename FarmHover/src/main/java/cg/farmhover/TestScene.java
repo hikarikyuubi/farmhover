@@ -148,9 +148,11 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
         updater.movementApplier(keyBits, ufo, cam);
+        
+        /* Projeção e View */
+        
         // Carrega a matriz de projeção perspectiva
         projectionMatrix.loadIdentity();
-        //usar o aspectRatio para manter a proporcao dos objetos
         projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 100.0f);
         projectionMatrix.bind();
 
@@ -179,6 +181,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 //        shadow.draw();
 
         /* Desenho das vacas */
+        
         for (Cow cow : cows) {
             cow.applyGravity();
             modelMatrix.loadIdentity();         
@@ -191,8 +194,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         }
 
         /* Desenho do OVNI */
+        
         modelMatrix.loadIdentity();
-        //modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
+        modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
         modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
         modelMatrix.rotate(-1*ufo.getRy(), 0, 1, 0);
         modelMatrix.scale(2,2,3);
@@ -201,7 +205,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.bind();
         ufo.getModel().draw();
         floatingSpeed += 2;
-       
     }
 
     @Override
@@ -227,7 +230,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable glad) {
         ufo.getModel().dispose();
-        for(int i = 0; i<cows.size(); ++i){
+        for(int i = 0; i < cows.size(); ++i){
             cows.get(i).getModel().dispose();
         }        
     }

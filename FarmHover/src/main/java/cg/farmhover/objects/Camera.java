@@ -28,12 +28,12 @@ public class Camera {
     }
     
     public void updatePosition(Ufo ufo) {
-        /*this.y = ufo.getY() + fixedDistY;
+        this.y = ufo.getY() + fixedDistY;
         this.x = ufo.getX() + fixedDist * 
                 (-1 * Util.roundDec(Math.sin(Math.toRadians(ufo.getRy())), 3));
         this.z = ufo.getZ() + fixedDist * 
                 Util.roundDec(Math.cos(Math.toRadians(ufo.getRy())), 3);
-        */
+        
     /*  
     // ufo.getX() + 10*ufo.getLookat('x')
     public float getLookFromX(float d) {
