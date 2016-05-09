@@ -20,10 +20,10 @@ public class Ufo extends SceneObject {
         this.y += (moveY * this.moveVel);
         if(direction!=0){
             // A ser ajustado ainda
-            float front = Util.frontXW(direction, this.rx) * this.moveVel;
-            this.x += (Util.roundDec(Math.sin(Math.toRadians(this.ry)), 3) * front);
-            this.z += -1*(Util.roundDec(Math.cos(Math.toRadians(this.ry)), 3) * front);
-            this.y += (Util.roundDec(Math.sin(Math.toRadians(this.rx)), 3) * front);
+            float front = direction * Util.cos(this.rx) * this.moveVel;
+            this.x += Util.sin(this.ry) * front;
+            this.z += -1 * Util.cos(this.ry) * front;
+            this.y += Util.sin(this.rx) * front;
         }
     }
 

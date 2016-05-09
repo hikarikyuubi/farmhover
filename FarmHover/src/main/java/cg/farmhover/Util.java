@@ -19,8 +19,12 @@ public class Util {
         return ((float) Math.round(number * roundPoint))/((float)roundPoint);
     }
     
-    public static float frontXW(int direction, float angle) {
-        return direction * roundDec(Math.cos(Math.toRadians(angle)), 3);
+    public static float sin(float angle) {
+        return roundDec(Math.sin(Math.toRadians(angle)), 3);
+    }
+    
+    public static float cos(float angle) {
+        return roundDec(Math.cos(Math.toRadians(angle)), 3);
     }
     
 }

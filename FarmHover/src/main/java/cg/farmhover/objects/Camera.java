@@ -12,12 +12,13 @@ import cg.farmhover.Util;
  * @author Hikari Kyuubi
  */
 public class Camera {
+    private int front;
     private float x, y, z;
     private float lookUpX, lookUpY, lookUpZ;
     private final float fixedDist, fixedDistY;
     
     public Camera (Ufo ufo) {
-        this.fixedDistY = 10f;
+        this.fixedDistY = 0f;
         this.fixedDist = 8f;
         this.x = ufo.getX();
         this.y = ufo.getY() + fixedDistY;
@@ -25,36 +26,50 @@ public class Camera {
         
         this.lookUpX = this.lookUpZ = 0;
         this.lookUpY = 1;
+        this.front = 1;
     }
     
+    /**
+     * Atualiza posição da câmera e sua visão. Parâmetros são usados na 
+     * matriz perspectiva. Sobre os processos feitos, tem-se:
+     *  
+     * Para ponto look-at (Povni): 
+     *   Corresponde à posição atual do ufo;
+     * 
+     * Para ponto look-from (Pcamera):
+     *   fixedDist = distância fixa ("atrás") que a câmera ficará em relação 
+     *   ao ufo. O ufo sempre ficará a frente da visão da câmera, mas ela
+     *   sempre verá sua parte traseira;
+     *   fixedDistY = elevação fixa em relação ao "topo" do ufo que a câmera 
+     *   ficará. O ufo sempre ficará "abaixo" da visão da câmera, mas ela 
+     *   sempre verá sua parte superior;
+     * 
+     * Para ponto look-up:
+     *   sin e cos de Rz = componentes XZ e Y  (respectivamente) do vetor
+     *   partindo da origem com angulo Rz em relação a Z;
+     *   sin e cos de Ry = componentes X e Z (respectivamente) do vetor
+     *   partindo da origem com angulo Ry em relação a Y;
+     * 
+     * @param ufo objeto referente ao "personagem jogável", o ovni
+     */
     public void updatePosition(Ufo ufo) {
-        this.y = ufo.getY() + fixedDistY;
-        this.x = ufo.getX() + fixedDist * 
-                (-1 * Util.roundDec(Math.sin(Math.toRadians(ufo.getRy())), 3));
-        this.z = ufo.getZ() + fixedDist * 
-                Util.roundDec(Math.cos(Math.toRadians(ufo.getRy())), 3);
+        //this.y = ufo.getY() + fixedDistY;
+        this.y = ufo.getY() + fixedDistY * Util.sin(90-ufo.getRx());
         
-    /*  
-    // ufo.getX() + 10*ufo.getLookat('x')
-    public float getLookFromX(float d) {
-        //return this.getX() - d * frontXW(1) * roundDec(Math.sin(Math.toRadians(ry)), 3);
-        return this.getX() - d * Util.roundDec(Math.sin(Math.toRadians(ry)), 3);
+        this.x = ufo.getX() + fixedDist * 
+                (-1 * Util.sin(ufo.getRy()));
+//        this.x = ufo.getX() - fixedDist * Util.cos(ufo.getRx()) 
+//                * Util.sin(ufo.getRy());
+        
+        this.z = ufo.getZ() + fixedDist * Util.cos(ufo.getRy());
+//        this.z = ufo.getZ() + fixedDist * Util.cos(ufo.getRx()) 
+//                * Util.cos(ufo.getRy());
+        
+        this.lookUpX = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy());
+        this.lookUpZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
+        this.lookUpY = Util.cos(ufo.getRz());
     }
-
-    // ufo.getY() + 10*ufo.getLookat('y')
-    public float getLookFromY(float d) {
-        return this.getY() + d * (roundDec(Math.sin(Math.toRadians(90 - rx)), 3));
-        //return this.getY() + d;
-    }
-    
-    // ufo.getZ() + 10*ufo.getLookat('z')
-    public float getLookFromZ(float d) {
-        //return this.getZ() + d * frontXW(1) * roundDec(Math.cos(Math.toRadians(ry)), 3);
-        return this.getZ() + d * roundDec(Math.cos(Math.toRadians(ry)), 3);
-    }
-    */
-    }
-
+   
     public float getX() {
         return x;
     }
