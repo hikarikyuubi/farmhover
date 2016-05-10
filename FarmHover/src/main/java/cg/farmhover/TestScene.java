@@ -196,10 +196,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         /* Desenho do OVNI */
         
         modelMatrix.loadIdentity();
-        modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
+        //modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
         modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
         modelMatrix.rotate(-1*ufo.getRy(), 0, 1, 0);
-        modelMatrix.scale(2,2,3);
+        modelMatrix.scale(2,2,2);
         modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
         modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
         modelMatrix.bind();

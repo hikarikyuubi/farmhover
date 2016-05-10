@@ -12,11 +12,10 @@ import cg.farmhover.Util;
  * @author Hikari Kyuubi
  */
 public class Camera {
-    private int front;
     private float x, y, z;
     private float lookUpX, lookUpY, lookUpZ;
     private final float fixedDist, fixedDistY;
-    
+    float ayx;
     public Camera (Ufo ufo) {
         this.fixedDistY = 0f;
         this.fixedDist = 8f;
@@ -26,7 +25,7 @@ public class Camera {
         
         this.lookUpX = this.lookUpZ = 0;
         this.lookUpY = 1;
-        this.front = 1;
+        ayx = 1;
     }
     
     /**
@@ -53,23 +52,44 @@ public class Camera {
      * @param ufo objeto referente ao "personagem jogável", o ovni
      */
     public void updatePosition(Ufo ufo) {
-        //this.y = ufo.getY() + fixedDistY;
-        this.y = ufo.getY() + fixedDistY * Util.sin(90-ufo.getRx());
+
+        /* Ajuste do LookFrom (posição da câmera) */
+         this.y = ufo.getY() + fixedDist * -1 * Util.sin(ufo.getRx()); // = 0
+         this.x = ufo.getX() + fixedDist * -1 * Util.cos(ufo.getRx()) 
+                 * Util.sin(ufo.getRy()); // = 0
+         this.z = ufo.getZ() + fixedDist * Util.cos(ufo.getRx()) 
+                 * Util.cos(ufo.getRy()); // = z + dist
         
-        this.x = ufo.getX() + fixedDist * 
-                (-1 * Util.sin(ufo.getRy()));
-//        this.x = ufo.getX() - fixedDist * Util.cos(ufo.getRx()) 
-//                * Util.sin(ufo.getRy());
+        /* Ajuste do viewUp 
+        (funciona pra cada rotação independentemente por enquanto*/
         
-        this.z = ufo.getZ() + fixedDist * Util.cos(ufo.getRy());
-//        this.z = ufo.getZ() + fixedDist * Util.cos(ufo.getRx()) 
-//                * Util.cos(ufo.getRy());
+        /* Rotação em Z */
+//         this.lookUpY = Util.cos(ufo.getRz());
+//         this.lookUpZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
+//         this.lookUpX = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy()); // = 0
+         
         
-        this.lookUpX = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy());
-        this.lookUpZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
-        this.lookUpY = Util.cos(ufo.getRz());
+        /* Rotação em X */
+//        this.lookUpY = Util.cos(ufo.getRx());
+//        this.lookUpZ = Util.sin(ufo.getRx()) * Util.cos(ufo.getRy());
+//        this.lookUpX = -1* Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
+ 
+
+        float luY_rZ = Util.cos(ufo.getRz());;
+        float luZ_rZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
+        float luX_rZ = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy());
+        
+        float luY_rX = Util.cos(ufo.getRx());
+        float luZ_rX = Util.sin(ufo.getRx()) * Util.cos(ufo.getRy());
+        float luX_rX = -1* Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
+        
+        /* Rotação em X */
+        this.lookUpY = (luY_rZ + luY_rX);
+        this.lookUpZ = (luZ_rZ + luZ_rX);
+        this.lookUpX = (luX_rZ + luX_rX);
+
     }
-   
+    
     public float getX() {
         return x;
     }
