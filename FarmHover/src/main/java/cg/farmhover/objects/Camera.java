@@ -62,32 +62,33 @@ public class Camera {
         
         /* Ajuste do viewUp 
         (funciona pra cada rotação independentemente por enquanto*/
-        
         /* Rotação em Z */
 //         this.lookUpY = Util.cos(ufo.getRz());
 //         this.lookUpZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
 //         this.lookUpX = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy()); // = 0
          
-        
         /* Rotação em X */
 //        this.lookUpY = Util.cos(ufo.getRx());
 //        this.lookUpZ = Util.sin(ufo.getRx()) * Util.cos(ufo.getRy());
 //        this.lookUpX = -1* Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
  
 
-        float luY_rZ = Util.cos(ufo.getRz());;
+        //float luY_rZ = Util.cos(ufo.getRz());
         float luZ_rZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
         float luX_rZ = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy());
         
-        float luY_rX = Util.cos(ufo.getRx());
+        //float luY_rX = Util.cos(ufo.getRx());
         float luZ_rX = Util.sin(ufo.getRx()) * Util.cos(ufo.getRy());
         float luX_rX = -1* Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
         
-        /* Rotação em X */
-        this.lookUpY = (luY_rZ + luY_rX);
-        this.lookUpZ = (luZ_rZ + luZ_rX);
-        this.lookUpX = (luX_rZ + luX_rX);
+        //this.lookUpY = (luY_rZ + luY_rX == 0) ? -1 : luY_rZ + luY_rX;
+        this.lookUpZ = luZ_rZ + luZ_rX;
+        this.lookUpX = luX_rZ + luX_rX;
 
+        /* funciona em z */
+        this.lookUpY = Util.cos(ufo.getRx() + ufo.getRz());
+//        this.lookUpZ = -1 * Util.sin((ufo.getRx() + ufo.getRz())) * Util.sin(ufo.getRy());
+//        this.lookUpX = -1 * Util.sin((ufo.getRx() + ufo.getRz())) * Util.cos(ufo.getRy());
     }
     
     public float getX() {
