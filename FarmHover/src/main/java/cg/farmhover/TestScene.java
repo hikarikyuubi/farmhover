@@ -158,6 +158,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
+        viewMatrix.translate(0, -5, -5);
+        viewMatrix.rotate(40,1,0,0);
         viewMatrix.lookAt(
                 cam.getX(), cam.getY(), cam.getZ(),
                 ufo.getX(), ufo.getY(), ufo.getZ(),
@@ -185,10 +187,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         for (Cow cow : cows) {
             cow.applyGravity();
             modelMatrix.loadIdentity();         
-
             modelMatrix.translate(cow.getX(), cow.getY(), cow.getZ());
             modelMatrix.rotate(cow.getRy(), 0, 1, 0);
-
             modelMatrix.bind();
             cow.getModel().draw();
         }

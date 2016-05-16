@@ -15,6 +15,7 @@ public class Camera {
     private float x, y, z;
     private float lookUpX, lookUpY, lookUpZ;
     private final float fixedDist, fixedDistY;
+    private float lookAtX, lookAtY, lookAtZ;
     float ayx;
     public Camera (Ufo ufo) {
         this.fixedDistY = 0f;
@@ -23,6 +24,9 @@ public class Camera {
         this.y = ufo.getY() + fixedDistY;
         this.z = ufo.getZ() + fixedDist;
         
+        this.lookAtX = ufo.getX();
+        this.lookAtY = ufo.getY();
+        this.lookAtZ = ufo.getZ();
         this.lookUpX = this.lookUpZ = 0;
         this.lookUpY = 1;
         ayx = 1;
@@ -70,25 +74,18 @@ public class Camera {
         /* Rotação em X */
 //        this.lookUpY = Util.cos(ufo.getRx());
 //        this.lookUpZ = Util.sin(ufo.getRx()) * Util.cos(ufo.getRy());
-//        this.lookUpX = -1* Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
+//        this.lookUpX = -1 * Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
  
 
-        //float luY_rZ = Util.cos(ufo.getRz());
         float luZ_rZ = -1 * Util.sin(ufo.getRz()) * Util.sin(ufo.getRy());
         float luX_rZ = -1 * Util.sin(ufo.getRz()) * Util.cos(ufo.getRy());
         
-        //float luY_rX = Util.cos(ufo.getRx());
         float luZ_rX = Util.sin(ufo.getRx()) * Util.cos(ufo.getRy());
         float luX_rX = -1* Util.sin(ufo.getRx()) * Util.sin(ufo.getRy());
         
-        //this.lookUpY = (luY_rZ + luY_rX == 0) ? -1 : luY_rZ + luY_rX;
-        this.lookUpZ = luZ_rZ + luZ_rX;
         this.lookUpX = luX_rZ + luX_rX;
-
-        /* funciona em z */
         this.lookUpY = Util.cos(ufo.getRx() + ufo.getRz());
-//        this.lookUpZ = -1 * Util.sin((ufo.getRx() + ufo.getRz())) * Util.sin(ufo.getRy());
-//        this.lookUpX = -1 * Util.sin((ufo.getRx() + ufo.getRz())) * Util.cos(ufo.getRy());
+        this.lookUpZ = luZ_rZ + luZ_rX;
     }
     
     public float getX() {
@@ -139,5 +136,15 @@ public class Camera {
         this.lookUpZ = lookUpZ;
     }
     
+    public float getLookAtX() {
+        return lookAtX;
+    }
     
+    public float getLookAtY() {
+        return lookAtY;
+    }
+    
+    public float getLookAtZ() {
+        return lookAtZ;
+    }
 }

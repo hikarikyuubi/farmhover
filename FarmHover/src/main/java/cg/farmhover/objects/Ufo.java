@@ -28,9 +28,15 @@ public class Ufo extends SceneObject {
     }
 
     public void rotate(int x, int y, int z) {
-        this.rx = (this.rx + x * this.flipDeg) % 360;
+        this.rx = this.rx + x * this.flipDeg;
+        if ( this.rx > 45) this.rx = 45;
+        else if ( this.rx < -45) this.rx = -45;
+        
+        this.rz = this.rz + z * this.flipDeg;
+        if (this.rz > 80) this.rz = 80;
+        else if (this.rz < -80) this.rz = -80;
+        
         this.ry = (this.ry + y * this.flipDeg) % 360;
-        this.rz = (this.rz + z * this.flipDeg) % 360;
     }
 
 }

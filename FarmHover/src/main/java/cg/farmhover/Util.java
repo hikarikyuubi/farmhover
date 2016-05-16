@@ -27,4 +27,8 @@ public class Util {
         return roundDec(Math.cos(Math.toRadians(angle)), 3);
     }
     
+    public static float max(float a, float b) {
+        if (Math.abs(a) > Math.abs(b)) return a;
+        return b;
+    }
 }
