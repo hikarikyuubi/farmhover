@@ -29,10 +29,6 @@ import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 
-/**
- *
- * @author Hikari Kyuubi
- */
 public class TestScene extends KeyAdapter implements GLEventListener { 
     
     private final Shader shader; // Gerenciador dos shaders
@@ -76,14 +72,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         shadow = new JWavefrontObject(new File(".\\models\\shadow.obj"));
         delta = 5f;
 
-        
-        //========================== depois consertar =================
-        ufo.setScalex(3);
-        ufo.setScaley(3);
-        ufo.setScalez(3);
-
         floatingSpeed = 0f;
-
     }
     
     @Override // Configura a inicialização
@@ -120,9 +109,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
 
         ufo.init(glad, shader);
-         for(int i = 0; i<cows.size(); ++i){
-            cows.get(i).init(glad, shader);
-            cows.get(i).getModel().unitize();
+         for(Cow cow : cows){
+            cow.init(glad, shader);
         }
 
         try {
@@ -185,6 +173,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         /* Desenho das vacas */
         
         for (Cow cow : cows) {
+            cow.resetInverseModelMatrix();
             cow.applyGravity();
             modelMatrix.loadIdentity();         
             modelMatrix.translate(cow.getX(), cow.getY(), cow.getZ());
@@ -194,14 +183,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         }
 
         /* Desenho do OVNI */
-        
+        ufo.resetInverseModelMatrix();
         modelMatrix.loadIdentity();
         //modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
-        modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
-        modelMatrix.rotate(-1*ufo.getRy(), 0, 1, 0);
-        modelMatrix.scale(2,2,2);
-        modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
-        modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
+        modelMatrix.translate(ufo, ufo.getX(),ufo.getY(),ufo.getZ());
+        modelMatrix.rotate(ufo, -1*ufo.getRy(), 0, 1, 0);
+        modelMatrix.rotate(ufo, ufo.getRx(), 1, 0, 0);
+        modelMatrix.rotate(ufo, ufo.getRz(), 0, 0, 1);
+        modelMatrix.scale(ufo.getScalex(), ufo.getScaley(), ufo.getScalez()); // !!! tá sem o primeiro argumento !!!
         modelMatrix.bind();
         ufo.getModel().draw();
         floatingSpeed += 2;
@@ -230,8 +219,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     @Override
     public void dispose(GLAutoDrawable glad) {
         ufo.getModel().dispose();
-        for(int i = 0; i < cows.size(); ++i){
-            cows.get(i).getModel().dispose();
+        for(Cow cow : cows){
+            cow.getModel().dispose();
         }        
     }
 

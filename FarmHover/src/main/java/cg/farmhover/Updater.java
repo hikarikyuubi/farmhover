@@ -1,20 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cg.farmhover;
 
+import static cg.farmhover.Main.animator;
 import static cg.farmhover.TestScene.cows;
 import cg.farmhover.objects.Camera;
+import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Ufo;
 import java.awt.event.KeyEvent;
 import java.util.BitSet;
 
-/**
- *
- * @author Hikari Kyuubi
- */
 public class Updater {
     
     public Updater () {
@@ -28,14 +21,23 @@ public class Updater {
             System.out.println(ufo.getX()+":"+ufo.getZ());
             float ux = ufo.getX();
             float uz = ufo.getZ();
-            for(int i = 0; i < cows.size(); ++i){
-                if(cows.get(i).isUnderUFO(ufo)){
-                    cows.get(i).uprise(ufo);
-                    TestScene.risingCow = cows.get(i);
+            for(Cow cow : cows){
+                if(cow.isUnderUFO(ufo)){
+                    cow.uprise(ufo);
+                    TestScene.risingCow = cow;
                     break;
                 }
             }
         }
+        if(keyBits.get(KeyEvent.VK_ESCAPE)){ // ESC pra fechar o programa
+             new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        animator.stop();
+                        System.exit(0);
+                    }
+                }).start();
+        } 
         if (keyBits.get(KeyEvent.VK_W))
             moveY = 1; // arise
         if (keyBits.get(KeyEvent.VK_S))
@@ -52,14 +54,28 @@ public class Updater {
             rX = 1; // flip frontward
         if (keyBits.get(KeyEvent.VK_X))
             rX = -1; // flip backward
-        if (keyBits.get(KeyEvent.VK_UP))
+        if (keyBits.get(KeyEvent.VK_UP)){
             direction = 1; // Move front
-        if (keyBits.get(KeyEvent.VK_DOWN))
+        }
+        if (keyBits.get(KeyEvent.VK_DOWN)){
             direction = -1; // Move back
+        }
         //====================================================
         ufo.rotate(rX, rY, rZ);
         ufo.move(direction, moveY);
+        if(checkUFOCollision(ufo) || (ufo.getY()<=ufo.getHeight()/2)){
+            ufo.move(-direction, -moveY);
+        }
         cam.updatePosition(ufo);
     }
+    
+    boolean checkUFOCollision(Ufo ufo){
+        for(Cow cow : cows){
+            if(ufo.isColliding(cow)){
+                return true;
+            }
+        }
+        return false;
+    } 
 
 }

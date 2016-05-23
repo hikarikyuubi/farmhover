@@ -1,16 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cg.farmhover.objects;
 
 import cg.farmhover.Util;
 
-/**
- *
- * @author Hikari Kyuubi
- */
 public class Camera {
     private float x, y, z;
     private float lookUpX, lookUpY, lookUpZ;

@@ -13,6 +13,9 @@ public class Ufo extends SceneObject {
         moveVel = 0.15f;
         flipDeg = 1.5f;
         model = new Model(new File(".\\models\\UFO.obj"));
+        this.setScalex(2);
+        this.setScaley(2);
+        this.setScalez(2);
     }
     
     

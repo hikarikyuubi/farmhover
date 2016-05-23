@@ -1,25 +1,21 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cg.farmhover.objects;
 
 import cg.farmhover.Model;
-import cg.farmhover.gl.jWaveFront.JWavefrontObject;
+import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.gl.util.Shader;
 import java.io.IOException;
+import static java.lang.Math.abs;
+import static java.lang.Math.sqrt;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLAutoDrawable;
 
-/**
- *
- * @author Barbara
- */
 public class SceneObject {
     Model model;
+    private Matrix4 inverseModelMatrix;
+
+    
     float x,y,z;
-    public float rx, ry, rz; // rotação ------------ depois mudar pra getters e setters
+    public float rx, ry, rz; // rotação ------------ depois mudar pra getters e setters (ou não)
     private float width, height, depth;
     private float scalex, scaley, scalez;
 
@@ -32,10 +28,88 @@ public class SceneObject {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        model.unitize(this);
+        this.model.unitize(this);
+        this.inverseModelMatrix = new Matrix4();
+ 
+        System.err.println("======================> w:" + this.width 
+                           + " h:" + this.height + " d:"+ this.depth);
+    }
+    
+    public void resetInverseModelMatrix(){
+        inverseModelMatrix.loadIdentity();
+        inverseModelMatrix.getStack().clear();
+    }
+    
+    private void findInverseModelMatrix(){
+        inverseModelMatrix.loadIdentity();
+        while(!inverseModelMatrix.getStack().empty()){
+            inverseModelMatrix.multiply(inverseModelMatrix.getStack().pop());
+        }
+    }
+    
+    float[] multiplyPos4Matrix(float x, float y, float z, float[] matrix){
+        float a00 = matrix[0], a01 = matrix[1], a02 = matrix[2], a03 = matrix[3];
+        float a10 = matrix[4], a11 = matrix[5], a12 = matrix[6], a13 = matrix[7];
+        float a20 = matrix[8], a21 = matrix[9], a22 = matrix[10], a23 = matrix[11];
+        float a30 = matrix[12], a31 = matrix[13], a32 = matrix[14], a33 = matrix[15];
+        float[] newPos = new float[3];
+        newPos[0] = a00*x + a01*y + a02*z + a03;
+        newPos[1] = a10*x + a11*y + a12*z + a03;
+        newPos[2] = a20*x + a21*y + a22*z + a03;
+        return newPos;
+    }
+    
+    public boolean isColliding(SceneObject other){
+        float maxDist = (Math.max(Math.max(this.width*this.scalex, this.depth*this.scalez), this.height*this.scaley) +
+                    Math.max(Math.max(other.getDepth()*other.getScalez(), other.getHeight()*other.getScaley()), other.getWidth()*other.getScalex()))/2;
+  
+        if(findDist(other)>=maxDist){ // se a distância entre os centros for maior que a soma dos 'raios' dos objetos       
+            return false;
+        }
+        //System.out.println("maxdist = "+maxDist + "ufo: "+this.x+", "+this.y+", "+this.z+" | cow: "+other.x+", "+other.y+", "+other.z);
+        findInverseModelMatrix();
         
-        System.err.println("======================> w:" + width 
-                           + " h:" + height + " d:"+depth);
+        float realwidth = other.getWidth()*other.getScalex();
+        float realheight = other.getHeight()*other.getScaley();
+        float realdepth = other.getDepth()*other.getScalez();
+        float ox = other.getX();
+        float oy = other.getY();
+        float oz = other.getZ();
+        // pegar cantos do 'other' no novo sistema de coordenadas
+        // extremidades da 'frente' do cubo
+        float[] topleft1 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+        float[] topright1 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+        float[] bottomleft1 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+        float[] bottomright1 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+        // extremidades de 'trás' do cubo
+        float[] topleft2 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+        float[] topright2 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+        float[] bottomleft2 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+        float[] bottomright2 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+        
+        float[] newCenter = {0, 0, 0}; // deduzindo todas as transformações o centro vai parar em 0
+        return (isInsideCube(topleft1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(topright1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomleft1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomright1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(topleft2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(topright2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomleft2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomright2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                );
+    }
+    
+    static private boolean isInsideCube(float[] pos, float[] center, float w, float h, float d){
+        return (pos[0]>=(center[0]-w/2) && pos[0]<=(center[0]+w/2)) 
+                || (pos[1]>=(center[1]-h/2) && pos[1]<=(center[1]+h/2))
+                || (pos[2]>=(center[2]-d/2) && pos[2]<=(center[2]+d/2));
+    }
+    
+    float findDist(SceneObject other){
+        float xdif = abs(this.x - other.getX());
+        float ydif = abs(this.y - other.getY());
+        float zdif = abs(this.z - other.getZ());
+        return (float) sqrt(xdif*xdif + ydif*ydif + zdif*zdif);
     }
     
     public void move(float x, float y, float z) {
@@ -121,6 +195,10 @@ public class SceneObject {
 
     public float getRz() {
         return this.rz;
+    }
+    
+    public Matrix4 getInverseModelMatrix() {
+        return inverseModelMatrix;
     }
 }
 

@@ -16,6 +16,9 @@ public class Cow extends SceneObject {
         //model = new Model(new File(".\\models\\cow.obj"));
         model = new Model(new File(".\\models\\newCow.obj"));
         rising = false;
+        this.setScalex(1);
+        this.setScaley(1);
+        this.setScalez(1);
     }
     
     public void uprise(Ufo ufo) {
@@ -31,7 +34,7 @@ public class Cow extends SceneObject {
     
     public void applyGravity() {
         if(!rising && y > 1) {
-            y -= (fallHeight - y) * 0.02f; // pra acelerar com o tempo 
+            y -= (fallHeight - y) * 0.03f; // pra acelerar com o tempo 
         }
     }
 

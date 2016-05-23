@@ -1,17 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cg.farmhover.gl.util;
 
+import cg.farmhover.objects.SceneObject;
+import java.util.Arrays;
 import java.util.Stack;
 import javax.media.opengl.GL3;
 
-/**
- *
- * @author PC
- */
+
 public class Matrix4 {
 
   private Stack<float[]> stack;
@@ -19,6 +13,36 @@ public class Matrix4 {
   private int handle;
   private float[] matrix;
 
+    public Stack<float[]> getStack() {
+        return stack;
+    }
+
+  //====================== funções personalizadas ==============================
+    public float[] getMatrix() {
+        return matrix;
+    }
+
+    public void setMatrix(float[] matrix) {
+        this.matrix = Arrays.copyOf(matrix, 16);
+    }
+    
+    public void scale(SceneObject object, float sx, float sy, float sz){
+        this.scale(sx, sy, sz);
+        float[] inverse = Arrays.copyOf(object.getInverseModelMatrix().scale(1/sx, 1/sy, 1/sz), 16);
+        object.getInverseModelMatrix().getStack().push(inverse);
+    }
+    public void translate(SceneObject object, float tx, float ty, float tz) {
+        this.translate(tx, ty, tz);
+        float[] inverse = Arrays.copyOf(object.getInverseModelMatrix().translate(-tx, -ty, -tz), 16);
+        object.getInverseModelMatrix().getStack().push(inverse);
+    }
+    
+    public void rotate(SceneObject object, float theta, float x, float y, float z) {
+        this.rotate(theta, x, y, z);
+        float[] inverse = Arrays.copyOf(object.getInverseModelMatrix().rotate(-theta, x, y, z), 16);
+        object.getInverseModelMatrix().getStack().push(inverse);
+    }
+ // ============================================================================
   public Matrix4() {
     matrix = new float[16];
     stack = new Stack<float[]>();
@@ -63,7 +87,7 @@ public class Matrix4 {
     this.matrix[15] = 1.0f;
   }
 
-  public void translate(float tx, float ty, float tz) {
+  public float[] translate(float tx, float ty, float tz) {
     float[] translate = new float[16];
     translate[0] = 1.0f;
     translate[5] = 1.0f;
@@ -73,18 +97,20 @@ public class Matrix4 {
     translate[13] = ty;
     translate[14] = tz;
     multiply(translate);
+    return translate;
   }
 
-  public void scale(float sx, float sy, float sz) {
+  public float[] scale(float sx, float sy, float sz) {
     float[] scale = new float[16];
     scale[0] = sx;
     scale[5] = sy;
     scale[10] = sz;
     scale[15] = 1.0f;
     multiply(scale);
+    return scale;
   }
 
-  public void rotate(float theta, float x, float y, float z) {
+  public float[] rotate(float theta, float x, float y, float z) {
     float len = (float) Math.sqrt(x * x + y * y + z * z);
 
     if (len != 1) {
@@ -128,6 +154,7 @@ public class Matrix4 {
     b20 = x * z * t + y * s;
     b21 = y * z * t - x * s;
     b22 = z * z * t + c;
+    
 
     // Perform rotation-specific matrix multiplication
     this.matrix[0] = a00 * b00 + a10 * b01 + a20 * b02;
@@ -144,19 +171,35 @@ public class Matrix4 {
     this.matrix[9] = a01 * b20 + a11 * b21 + a21 * b22;
     this.matrix[10] = a02 * b20 + a12 * b21 + a22 * b22;
     this.matrix[11] = a03 * b20 + a13 * b21 + a23 * b22;
+    
+    
+    //================== Personalizado =====================
+    float[] rotation = new float[16];
+    rotation[0] = b00;
+    rotation[1] = b01;
+    rotation[2] = b02;
+    rotation[4] = b10;
+    rotation[5] = b11;
+    rotation[6] = b12;
+    rotation[8] = b20;
+    rotation[9] = b21;
+    rotation[10] = b22;
+    rotation[15] = 1.0f;    
+    return rotation;
+    //======================================================
   }
 
-  public void push() {
-    stack.push(this.matrix.clone());
-  }
+//  public void push() {
+//    stack.push(this.matrix.clone());
+//  }
 
-  public void pop() {
-    if (stack.size() == 0) {
-      System.err.println("Matrix stack is empty.");
-    } else {
-      this.matrix = stack.pop();
-    }
-  }
+//  public void pop() {
+//    if (stack.size() == 0) {
+//      System.err.println("Matrix stack is empty.");
+//    } else {
+//      this.matrix = stack.pop();
+//    }
+//  }
 
   public void ortho2D(float xwmin, float xwmax, float ywmin, float ywmax) {
     float[] ortho = new float[16];
@@ -240,7 +283,7 @@ public class Matrix4 {
     vector[2] /= norm;
   }
 
-  private void multiply(float[] mat2) {
+  public void multiply(float[] mat2) {
     // Cache the matrix values (makes for huge speed increases!)
     float a00 = this.matrix[0], a01 = this.matrix[1], a02 = this.matrix[2], a03 = this.matrix[3];
     float a10 = this.matrix[4], a11 = this.matrix[5], a12 = this.matrix[6], a13 = this.matrix[7];
