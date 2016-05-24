@@ -47,7 +47,7 @@ public class SceneObject {
         }
     }
     
-    float[] multiplyPos4Matrix(float x, float y, float z, float[] matrix){
+    static float[] multiplyPos4Matrix(float x, float y, float z, float[] matrix){
         float a00 = matrix[0], a01 = matrix[1], a02 = matrix[2], a03 = matrix[3];
         float a10 = matrix[4], a11 = matrix[5], a12 = matrix[6], a13 = matrix[7];
         float a20 = matrix[8], a21 = matrix[9], a22 = matrix[10], a23 = matrix[11];
@@ -68,7 +68,6 @@ public class SceneObject {
         }
         //System.out.println("maxdist = "+maxDist + "ufo: "+this.x+", "+this.y+", "+this.z+" | cow: "+other.x+", "+other.y+", "+other.z);
         findInverseModelMatrix();
-        
         float realwidth = other.getWidth()*other.getScalex();
         float realheight = other.getHeight()*other.getScaley();
         float realdepth = other.getDepth()*other.getScalez();
@@ -87,22 +86,23 @@ public class SceneObject {
         float[] bottomleft2 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
         float[] bottomright2 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
         
-        float[] newCenter = {0, 0, 0}; // deduzindo todas as transformações o centro vai parar em 0
-        return (isInsideCube(topleft1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(topright1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomleft1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomright1, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(topleft2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(topright2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomleft2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomright2, newCenter, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+        float[] pos0  = multiplyPos4Matrix(this.x, this.y, this.z, this.inverseModelMatrix.getMatrix()); // posição pré-transformações 
+        return (isInsideCube(topleft1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(topright1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomleft1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomright1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(topleft2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(topright2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomleft2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
+                || isInsideCube(bottomright2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
                 );
     }
     
     static private boolean isInsideCube(float[] pos, float[] center, float w, float h, float d){
+        //System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
         return (pos[0]>=(center[0]-w/2) && pos[0]<=(center[0]+w/2)) 
-                || (pos[1]>=(center[1]-h/2) && pos[1]<=(center[1]+h/2))
-                || (pos[2]>=(center[2]-d/2) && pos[2]<=(center[2]+d/2));
+                && (pos[1]>=(center[1]-h/2) && pos[1]<=(center[1]+h/2))
+                && (pos[2]>=(center[2]-d/2) && pos[2]<=(center[2]+d/2));
     }
     
     float findDist(SceneObject other){
