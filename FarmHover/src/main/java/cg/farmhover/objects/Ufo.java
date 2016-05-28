@@ -9,7 +9,7 @@ public class Ufo extends SceneObject {
     
     public Ufo() {
         rx = ry = rz = x = z = 0f;
-        y = 8f;
+        y = 10f;
         moveVel = 0.15f;
         flipDeg = 1.5f;
         model = new Model(new File(".\\models\\UFO.obj"));

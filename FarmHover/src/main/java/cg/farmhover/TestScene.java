@@ -11,6 +11,7 @@ import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
 import cg.farmhover.gl.util.ShaderFactory.ShaderType;
+import cg.farmhover.models.Skybox;
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Ufo;
@@ -46,6 +47,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private float floatingSpeed;
     private BitSet keyBits;
     private Updater updater;
+    private final Skybox skybox;
+    private final Shader skyboxShader;
+    private int[] shaderHandles;
+    private int[] skyboxShaderHandles;
     
 
     
@@ -53,6 +58,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         keyBits = new BitSet(256);
         updater = new Updater();
         shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
+
         modelMatrix = new Matrix4();
         projectionMatrix = new Matrix4();
         viewMatrix = new Matrix4();
@@ -71,8 +77,12 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         shadow = new JWavefrontObject(new File(".\\models\\shadow.obj"));
         delta = 5f;
-
+        skybox = new Skybox();
+        skyboxShader = ShaderFactory.getInstance(ShaderType.SKYBOX_SHADER);
         floatingSpeed = 0f;
+        shaderHandles = new int[3];
+        skyboxShaderHandles = new int[3];
+        //aspectRatio = 1.0f;
     }
     
     @Override // Configura a inicialização
@@ -91,26 +101,34 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         //inicializa os shaders
         shader.init(gl);
+        skyboxShader.init(gl);
 
-        //ativa os shaders
-        shader.bind();
+        // inicializa as matrizes
+        modelMatrix.init(gl);
+        projectionMatrix.init(gl);
+        viewMatrix.init(gl);
 
-        //inicializa a matrix Model and Projection
-        modelMatrix.init(gl, shader.getUniformLocation("u_modelMatrix"));
-        projectionMatrix.init(gl, shader.getUniformLocation("u_projectionMatrix"));
-        viewMatrix.init(gl, shader.getUniformLocation("u_viewMatrix"));
-        
+        // pega os indices das matrizes no Complete Shader
+        shaderHandles[0] = shader.getUniformLocation("u_modelMatrix");
+        shaderHandles[1] = shader.getUniformLocation("u_projectionMatrix");
+        shaderHandles[2] = shader.getUniformLocation("u_viewMatrix");
+        // pega os indices das matrizes no Skybox Shader
+        skyboxShaderHandles[0] = skyboxShader.getUniformLocation("u_modelMatrix");
+        skyboxShaderHandles[1] = skyboxShader.getUniformLocation("u_projectionMatrix");
+        skyboxShaderHandles[2] = skyboxShader.getUniformLocation("u_viewMatrix");
+
         //init the light
+        light.init(gl, shader);
         light.setPosition(new float[]{0, 50, -50, 1.0f});
         light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
         light.setDiffuseColor(new float[]{0.75f, 0.75f, 0.75f, 1.0f});
         light.setSpecularColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
-        light.init(gl, shader);
 
 
-        ufo.init(glad, shader);
+
+        ufo.init(gl, shader);
          for(Cow cow : cows){
-            cow.init(glad, shader);
+            cow.init(gl, shader);
         }
 
         try {
@@ -126,33 +144,42 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             System.exit(-1);
         }
 
-        light.bind();
+
+        // carrega a textura do skybox
+        skybox.init(gl, skyboxShader);
+        try {
+            skybox.loadTexture(skybox.getTextureFiles(),".jpg");
+        } catch (IOException ex) {
+            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
     
     @Override // Chamado pelo animator
     public void display(GLAutoDrawable glad) {
         GL3 gl = glad.getGL().getGL3(); // Contexto de desenho
-        
+
+        shader.bind();
+        light.bind();
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
         updater.movementApplier(keyBits, ufo, cam);
         
         /* Projeção e View */
-        
         // Carrega a matriz de projeção perspectiva
         projectionMatrix.loadIdentity();
-        projectionMatrix.perspective(45.0f, aspectRatio, 0.1f, 100.0f);
-        projectionMatrix.bind();
+        projectionMatrix.perspective(80.0f, aspectRatio, 0.1f, 1000.0f);
+        projectionMatrix.bind(shaderHandles[1]);
 
         // Carrega a camera para acompanhar o OVNI
         viewMatrix.loadIdentity();
-        viewMatrix.translate(0, -5, -5);
+        viewMatrix.translate(0, -5, -7);
         viewMatrix.rotate(40,1,0,0);
         viewMatrix.lookAt(
                 cam.getX(), cam.getY(), cam.getZ(),
                 ufo.getX(), ufo.getY(), ufo.getZ(),
                 cam.getLookUpX(), cam.getLookUpY(), cam.getLookUpZ());
-        viewMatrix.bind();
+        viewMatrix.bind(shaderHandles[2]);
         
         /* Elementos fixos do cenário */
         
@@ -160,7 +187,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.loadIdentity();
         modelMatrix.translate(0, -1f, 0);
         modelMatrix.scale(50, 1, 50);
-        modelMatrix.bind();
+        modelMatrix.bind(shaderHandles[0]);
         farm.draw();
         
         // sombra
@@ -178,7 +205,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.loadIdentity();         
             modelMatrix.translate(cow.getX(), cow.getY(), cow.getZ());
             modelMatrix.rotate(cow.getRy(), 0, 1, 0);
-            modelMatrix.bind();
+            modelMatrix.bind(shaderHandles[0]);
             cow.getModel().draw();
         }
 
@@ -191,9 +218,27 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.rotate(ufo, ufo.getRx(), 1, 0, 0);
         modelMatrix.rotate(ufo, ufo.getRz(), 0, 0, 1);
         modelMatrix.scale(ufo.getScalex(), ufo.getScaley(), ufo.getScalez()); // !!! tá sem o primeiro argumento !!!
-        modelMatrix.bind();
+        modelMatrix.bind(shaderHandles[0]);
         ufo.getModel().draw();
         floatingSpeed += 2;
+
+        /* Desenho do Skybox */
+
+        skyboxShader.bind();
+        gl.glDepthFunc(GL.GL_LEQUAL);
+        gl.glDepthMask(false);
+        projectionMatrix.bind(skyboxShaderHandles[1]);
+        viewMatrix.bind(skyboxShaderHandles[2]);
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
+        modelMatrix.bind(skyboxShaderHandles[0]);
+        // skybox cube
+        skybox.bind();
+        skybox.draw();
+        gl.glDepthMask(true);
+        gl.glDepthFunc(GL.GL_LESS);
+
+        gl.glFlush();
     }
 
     @Override

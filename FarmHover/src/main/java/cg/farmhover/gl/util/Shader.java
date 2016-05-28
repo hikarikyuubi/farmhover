@@ -51,9 +51,9 @@ public class Shader {
 
     handle = linkShaders(shadersHandles);
 
-    for (int i = 0; i < shadersHandles.length; i++) {
-      if (shadersHandles[i] >= 0) {
-        gl.glDeleteShader(shadersHandles[i]);
+    for (int shadersHandle : shadersHandles) {
+      if (shadersHandle >= 0) {
+        gl.glDeleteShader(shadersHandle);
       }
     }
   }

@@ -528,9 +528,9 @@ public class JWavefrontObject {
      * XXX doing a linear search on a string key'd list is pretty lame, but
      * it works and is fast enough for now.
      */
-    for (int i = 0; i < materials.size(); i++) {
-      if (materials.get(i).name.toLowerCase().equals(name.toLowerCase())) {
-        return materials.get(i);
+    for (Material material1 : materials) {
+      if (material1.name.toLowerCase().equals(name.toLowerCase())) {
+        return material1;
       }
     }
 
@@ -548,9 +548,9 @@ public class JWavefrontObject {
      * XXX doing a linear search on a string key'd list is pretty lame, but
      * it works and is fast enough for now.
      */
-    for (int i = 0; i < textures.size(); i++) {
-      if (textures.get(i).name.toLowerCase().equals(name.toLowerCase())) {
-        return textures.get(i);
+    for (Texture texture : textures) {
+      if (texture.name.toLowerCase().equals(name.toLowerCase())) {
+        return texture;
       }
     }
 
@@ -679,6 +679,7 @@ public class JWavefrontObject {
                     }
                   }
 
+                  assert material != null;
                   material.texture = texture;
                 } else {
                   Logger.getLogger(JWavefrontObject.class.getName()).log(Level.WARNING,
@@ -838,9 +839,7 @@ public class JWavefrontObject {
     float angle = 90;
     Normal[] vertex_normals = new Normal[vertices.size()];
 
-    for (int i = 0; i < groups.size(); i++) {
-      Group group = groups.get(i);
-
+    for (Group group : groups) {
       for (int j = 0; j < group.triangles.size(); j++) {
         Triangle triangle = group.triangles.get(j);
 
@@ -885,23 +884,21 @@ public class JWavefrontObject {
       }
     }
 
-    for (int i = 0; i < vertex_normals.length; i++) {
-      float norm = (float) Math.sqrt(vertex_normals[i].x * vertex_normals[i].x
-              + vertex_normals[i].y * vertex_normals[i].y
-              + vertex_normals[i].z * vertex_normals[i].z);
+    for (Normal vertex_normal : vertex_normals) {
+      float norm = (float) Math.sqrt(vertex_normal.x * vertex_normal.x
+              + vertex_normal.y * vertex_normal.y
+              + vertex_normal.z * vertex_normal.z);
 
       if (norm > 0) {
-        vertex_normals[i].x /= norm;
-        vertex_normals[i].y /= norm;
-        vertex_normals[i].z /= norm;
+        vertex_normal.x /= norm;
+        vertex_normal.y /= norm;
+        vertex_normal.z /= norm;
       }
 
-      normals.add(vertex_normals[i]);
+      normals.add(vertex_normal);
     }
 
-    for (int i = 0; i < groups.size(); i++) {
-      Group group = groups.get(i);
-
+    for (Group group : groups) {
       for (int j = 0; j < group.triangles.size(); j++) {
         Triangle triangle = group.triangles.get(j);
 
@@ -919,9 +916,9 @@ public class JWavefrontObject {
   }
 
   public void dump() {
-    for (int i = 0; i < groups.size(); i++) {
+    for (Group group : groups) {
       System.out.println("----");
-      groups.get(i).dump();
+      group.dump();
     }
   }
 }

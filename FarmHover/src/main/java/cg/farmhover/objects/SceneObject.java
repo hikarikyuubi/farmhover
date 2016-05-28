@@ -7,7 +7,6 @@ import java.io.IOException;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import javax.media.opengl.GL3;
-import javax.media.opengl.GLAutoDrawable;
 
 public class SceneObject {
     Model model;
@@ -19,9 +18,8 @@ public class SceneObject {
     private float width, height, depth;
     private float scalex, scaley, scalez;
 
-    public void init(GLAutoDrawable glad, Shader shader) {
+    public void init(GL3 gl, Shader shader) {
         // Get pipeline
-        GL3 gl = glad.getGL().getGL3();
 
         try {
             model.init(gl, shader);

@@ -9,7 +9,7 @@ public class Matrix4 {
 
     private Stack<float[]> stack;
     private GL3 gl;
-    private int handle;
+   // private int handle;
     private float[] matrix;
 
     public Stack<float[]> getStack() {
@@ -61,12 +61,12 @@ public class Matrix4 {
         loadIdentity();
     }
 
-    public void init(final GL3 gl, int handle) {
+    public void init(final GL3 gl) {
         this.gl = gl;
-        this.handle = handle;
+        //this.handle = handle;
     }
 
-    public void bind() {
+    public void bind(int handle) {
         gl.glUniformMatrix4fv(handle, 1, false, this.matrix, 0);
     }
 

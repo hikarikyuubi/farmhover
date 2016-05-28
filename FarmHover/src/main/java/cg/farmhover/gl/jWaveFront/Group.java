@@ -29,9 +29,7 @@ public class Group {
         float u[] = new float[3];
         float v[] = new float[3];
 
-        for (int i = 0; i < triangles.size(); i++) {
-            Triangle triangle = triangles.get(i);
-
+        for (Triangle triangle : triangles) {
             u[0] = triangle.vertices[1].x - triangle.vertices[0].x;
             u[1] = triangle.vertices[1].y - triangle.vertices[0].y;
             u[2] = triangle.vertices[1].z - triangle.vertices[0].z;
