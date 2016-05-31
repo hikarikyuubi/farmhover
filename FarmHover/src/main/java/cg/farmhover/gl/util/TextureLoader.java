@@ -93,7 +93,7 @@ public class TextureLoader {
         gl.glBindTexture(target, textureID);
 
         if( target == GL.GL_TEXTURE_2D) {
-            bufferedImage = loadImage("images/" + resourceName[0] + extension);
+            bufferedImage = loadImage(".\\images\\" + resourceName[0] + extension);
             texture.setWidth(bufferedImage.getWidth());
             texture.setHeight(bufferedImage.getHeight());
 
@@ -106,7 +106,7 @@ public class TextureLoader {
                     0, srcPixelFormat, GL.GL_UNSIGNED_BYTE, textureBuffer);
         } else {
             for (int i = 0; i < resourceName.length; i++) {
-                bufferedImage = loadImage("images/" + resourceName[i] + extension);
+                bufferedImage = loadImage(".\\images\\" + resourceName[i] + extension);
 
                 texture.setWidth(bufferedImage.getWidth());
                 texture.setHeight(bufferedImage.getHeight());
