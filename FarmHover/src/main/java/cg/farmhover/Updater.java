@@ -5,12 +5,12 @@ import static cg.farmhover.TestScene.cows;
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Particle;
+import cg.farmhover.objects.ParticleSystem;
 import cg.farmhover.objects.Ufo;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Iterator;
-import java.util.List;
 
 public class Updater {
     
@@ -74,18 +74,20 @@ public class Updater {
         cam.updatePosition(ufo);
     }
     
-    public ArrayList<Particle> particleUpdater(BitSet keyBits,ArrayList<Particle> particles, Ufo ufo) {
-            if (keyBits.get(KeyEvent.VK_UP)) {
+    public ArrayList<Particle> particleUpdater(BitSet keyBits, ParticleSystem psys, ArrayList<Particle> particles, Ufo ufo) {
+            int aux = (keyBits.get(KeyEvent.VK_UP))? 1 : 0;
+            aux = (keyBits.get(KeyEvent.VK_DOWN)) ? -1 : aux;
+            if (aux != 0) {
+                
                 float[] pos = new float[3];
                 pos[0] = ufo.getX();
                 pos[1] = ufo.getY();
                 pos[2] = ufo.getZ();
-                float[] v = new float[3];
-                v[0] = 0f; 
-                v[2] = 0f;
-                v[1] = 0f;
-                particles.add(new Particle(pos, v, 1, 60, 0, 1));
-                
+                float[] rot = new float[3];
+                rot[0] = ufo.getRx(); 
+                rot[1] = ufo.getRy();
+                rot[2] = ufo.getRz();
+                particles = psys.generateParticles(1, pos, rot, particles);    
             }
             Iterator<Particle> iterator = particles.iterator();
            while(iterator.hasNext()) {
@@ -93,6 +95,14 @@ public class Updater {
                if(!p.update(ufo)) {
                    iterator.remove();
                }
+           }
+           if (keyBits.get(KeyEvent.VK_1)) {
+               float[] pos = new float[3];
+                pos[0] = ufo.getX();
+                pos[1] = ufo.getY();
+                pos[2] = ufo.getZ();
+                ParticleSystem p = new ParticleSystem(300, 0.5f, 0, 60);
+               particles = p.explosion(pos, particles);
            }
            return particles;
     }

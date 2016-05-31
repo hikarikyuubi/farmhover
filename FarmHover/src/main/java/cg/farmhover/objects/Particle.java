@@ -30,9 +30,7 @@ public class Particle {
     
     public boolean update(Ufo ufo) {
         //velocity[1] += 0.005f * gravityEffect;
-        velocity[2] += 0.0025f * gravityEffect * Util.cos(ufo.getRy());
-        velocity[0] += 0.0025f * gravityEffect * -Util.sin(ufo.getRy());
-        scale *= 1.01;
+        //velocity[1] -= 0.0025f * gravityEffect;
        float[] change = velocity.clone();
         position[0] += change[0]*scale;
         position[1] += change[1]*scale;

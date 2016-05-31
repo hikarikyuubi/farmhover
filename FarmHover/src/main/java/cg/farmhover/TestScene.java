@@ -14,10 +14,7 @@ import cg.farmhover.gl.util.ShaderFactory.ShaderType;
 import cg.farmhover.models.Cube;
 import cg.farmhover.models.SimpleModel;
 import cg.farmhover.models.Skybox;
-import cg.farmhover.objects.Camera;
-import cg.farmhover.objects.Cow;
-import cg.farmhover.objects.Particle;
-import cg.farmhover.objects.Ufo;
+import cg.farmhover.objects.*;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -58,7 +55,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private int[] particleShaderHandles;
     private ArrayList<Particle> particles;
     private SimpleModel quad;
-    
+    private JWavefrontObject barn, house3;
+    private ParticleSystem psys;
 
     
     public TestScene() {
@@ -71,6 +69,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix = new Matrix4();
         light = new Light();
         quad = new Cube();
+        barn = new JWavefrontObject(new File(".\\models\\barn.obj"));
+        house3 = new JWavefrontObject(new File(".\\models\\house3.obj"));
         cows = new ArrayList();
         Random rand = new Random();
         Cow cow;
@@ -80,20 +80,23 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             cows.add(cow); 
             
         }
-        cowaux = new Cow(0f, 10f, 0f);
         ufo = new Ufo();
         cam = new Camera(ufo);
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         shadow = new JWavefrontObject(new File(".\\models\\shadow.obj"));
         delta = 5f;
+        
         skybox = new Skybox();
         skyboxShader = ShaderFactory.getInstance(ShaderType.SKYBOX_SHADER);
+        
+        particles = new ArrayList<>();
+        psys = new ParticleSystem(10,0.1f,1, 40);
         particleShader = ShaderFactory.getInstance(ShaderType.PARTICLE_SHADER);
         floatingSpeed = 0f;
+        
         shaderHandles = new int[3];
         skyboxShaderHandles = new int[3];
         particleShaderHandles = new int[3];
-        particles = new ArrayList<>();
         //aspectRatio = 1.0f;
     }
     
@@ -145,23 +148,33 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
 
         ufo.init(gl, shader);
-         for(Cow cow : cows){
+        for(Cow cow : cows){
             cow.init(gl, shader);
-        }   
+        }  
         try {
-            //init the model
             farm.init(gl, shader);
             farm.unitize();
-//            shadow.init(gl, shader);
-//            shadow.unitize();
-            //init the model
-
         } catch (IOException ex) {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
         }
 
-
+        try {
+            //init the model
+            barn.init(gl, shader);
+            barn.unitize();
+        } catch (IOException ex) {
+            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(-1);
+        }
+        try {
+            //init the model
+            house3.init(gl, shader);
+            house3.unitize();
+        } catch (IOException ex) {
+            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(-1);
+        }
           // carrega a textura do skybox
           skybox.init(gl, skyboxShader);
           try {
@@ -175,13 +188,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     @Override // Chamado pelo animator
     public void display(GLAutoDrawable glad) {
         GL3 gl = glad.getGL().getGL3(); // Contexto de desenho
-
+        
         shader.bind();
         light.bind();
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
         updater.movementApplier(keyBits, ufo, cam);
-        particles = updater.particleUpdater(keyBits, particles, ufo);
+ 
+        particles = updater.particleUpdater(keyBits, psys, particles, ufo);
         
         /* Projeção e View */
         // Carrega a matriz de projeção perspectiva
@@ -208,6 +222,17 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.bind(shaderHandles[0]);
         farm.draw();
         
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(0, 5f, 10);
+        modelMatrix.scale(5, 5, 5);
+        modelMatrix.bind(shaderHandles[0]);
+        barn.draw();
+        
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(15, 5f, 0);
+        modelMatrix.scale(5, 5, 5);
+        modelMatrix.bind(shaderHandles[0]);
+        house3.draw();        
         // sombra
 //        modelMatrix.loadIdentity();
 //        modelMatrix.translate(ufo.getX(),2,ufo.getZ());
@@ -216,7 +241,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 //        shadow.draw();
 
         /* Desenho das vacas */
-        
+       
         for (Cow cow : cows) {
             cow.resetInverseModelMatrix();
             cow.applyGravity();
@@ -242,47 +267,48 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         /* Desenho das Particulas */
         //particleShader.bind();
-        //projectionMatrix.bind(particleShaderHandles[1]);
-        //viewMatrix.bind(particleShaderHandles[2]);
-      
-        gl.glEnable(gl.GL_BLEND);
-        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
+       // particleShader.bind();
+
+        //gl.glEnable(gl.GL_BLEND);
+        //gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA);
         //gl.glEnableVertexAttribArray(0);
         //gl.glBindVertexArray(quad.getVaoID());
-        gl.glDepthMask(false);
+        //gl.glDepthMask(false);
+       //projectionMatrix.bind(particleShaderHandles[1]);
+        //viewMatrix.bind(particleShaderHandles[2]);
         for (Particle p : particles) {
             modelMatrix.loadIdentity();
             modelMatrix.translate(p.getPosition()[0], p.getPosition()[1], p.getPosition()[2]);
-            modelMatrix.rotate(ufo, -1*ufo.getRy(), 0, 1, 0);
-            modelMatrix.rotate(ufo, ufo.getRx(), 1, 0, 0);
-            modelMatrix.rotate(ufo, ufo.getRz(), 0, 0, 1);
-            modelMatrix.scale(p.getScale(), p.getScale(), p.getScale()*0.1f);
+            modelMatrix.rotate(-1*ufo.getRy(), 0, 1, 0);
+            modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
+            modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
+            modelMatrix.scale(p.getScale(), p.getScale(), p.getScale()*0.3f);
 //modelMatrix.updateModelViewMatrix(p.getPosition(), p.getRotation(), p.getScale(), viewMatrix.getMatrix()); ;
             modelMatrix.bind(shaderHandles[0]);
             quad.bind();
             quad.draw();
         }
-        gl.glDepthMask(true);
-        gl.glDisable(gl.GL_BLEND);
+        //gl.glDepthMask(true);
+        //gl.glDisable(gl.GL_BLEND);
         //gl.glDisableVertexAttribArray(0);
         //gl.glBindVertexArray(0);
         
         /* Desenho do Skybox */
-          skyboxShader.bind();
-          gl.glDepthFunc(GL.GL_LEQUAL);
-          gl.glDepthMask(false);
-          projectionMatrix.bind(skyboxShaderHandles[1]);
-          viewMatrix.bind(skyboxShaderHandles[2]);
-          modelMatrix.loadIdentity();
-          modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
-          modelMatrix.bind(skyboxShaderHandles[0]);
-//        // skybox cube
-          skybox.bind();
-          skybox.draw();
-          gl.glDepthMask(true);
-          gl.glDepthFunc(GL.GL_LESS);
+        skyboxShader.bind();
+        gl.glDepthFunc(GL.GL_LEQUAL);
+        gl.glDepthMask(false);
+        projectionMatrix.bind(skyboxShaderHandles[1]);
+        viewMatrix.bind(skyboxShaderHandles[2]);
+        modelMatrix.loadIdentity();
+        modelMatrix.translate(ufo.getX(),ufo.getY(),ufo.getZ());
+        modelMatrix.bind(skyboxShaderHandles[0]);
+        // skybox cube
+        skybox.bind();
+        skybox.draw();
+        gl.glDepthMask(true);
+        gl.glDepthFunc(GL.GL_LESS);
 
-          gl.glFlush();
+        gl.glFlush();
     }
 
     @Override
