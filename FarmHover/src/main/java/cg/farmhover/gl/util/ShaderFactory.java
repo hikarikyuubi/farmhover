@@ -21,7 +21,8 @@ public class ShaderFactory {
     TEXTURE_SHADER,
     NORMALMAP_SHADER,
     COMPLETE_SHADER,
-    SKYBOX_SHADER
+    SKYBOX_SHADER,
+    PARTICLE_SHADER
   };
 
   public static Shader getInstance(ShaderType type) {
@@ -44,7 +45,9 @@ public class ShaderFactory {
     } else if (type == ShaderType.COMPLETE_SHADER) {
       return new Shader("complete_vertex.glsl", "complete_fragment.glsl");
     } else if (type == ShaderType.SKYBOX_SHADER) {
-    return new Shader("skybox_vertex.glsl", "skybox_fragment.glsl");
+      return new Shader("skybox_vertex.glsl", "skybox_fragment.glsl");
+    } else if (type == ShaderType.PARTICLE_SHADER) {
+      return new Shader("Particle_vertex.glsl", "particle_fragment.glsl");
     }
     return null;
   }

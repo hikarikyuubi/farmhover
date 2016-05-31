@@ -4,9 +4,13 @@ import static cg.farmhover.Main.animator;
 import static cg.farmhover.TestScene.cows;
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
+import cg.farmhover.objects.Particle;
 import cg.farmhover.objects.Ufo;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Iterator;
+import java.util.List;
 
 public class Updater {
     
@@ -60,6 +64,7 @@ public class Updater {
         if (keyBits.get(KeyEvent.VK_DOWN)){
             direction = -1; // Move back
         }
+       
         //====================================================
         ufo.rotate(rX, rY, rZ);
         ufo.move(direction, moveY);
@@ -67,6 +72,29 @@ public class Updater {
             ufo.move(-direction, -moveY);
         }
         cam.updatePosition(ufo);
+    }
+    
+    public ArrayList<Particle> particleUpdater(BitSet keyBits,ArrayList<Particle> particles, Ufo ufo) {
+            if (keyBits.get(KeyEvent.VK_UP)) {
+                float[] pos = new float[3];
+                pos[0] = ufo.getX();
+                pos[1] = ufo.getY();
+                pos[2] = ufo.getZ();
+                float[] v = new float[3];
+                v[0] = 0f; 
+                v[2] = 0f;
+                v[1] = 0f;
+                particles.add(new Particle(pos, v, 1, 60, 0, 1));
+                
+            }
+            Iterator<Particle> iterator = particles.iterator();
+           while(iterator.hasNext()) {
+               Particle p = iterator.next();
+               if(!p.update(ufo)) {
+                   iterator.remove();
+               }
+           }
+           return particles;
     }
     
     boolean checkUFOCollision(Ufo ufo){
@@ -77,5 +105,5 @@ public class Updater {
         }
         return false;
     } 
-
+ 
 }
