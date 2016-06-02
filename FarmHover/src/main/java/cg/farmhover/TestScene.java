@@ -60,8 +60,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private int[] skyboxShaderHandles;
     private int[] particleShaderHandles;
     private ArrayList<Particle> particles;
-    private SimpleModel quad;
-    private JWavefrontObject barn, house3;
+    //private SimpleModel quad;
+    private JWavefrontObject quad;
+    //private JWavefrontObject barn, house3;
     private ParticleSystem psys;
     private int[] terrainShaderHandles;
     private Terrain terrain;
@@ -77,9 +78,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix = new Matrix4();
         light = new Light();
         simpleLight = new SimpleLight();
-        quad = new Cube();
-        barn = new JWavefrontObject(new File(".\\models\\barn.obj"));
-        house3 = new JWavefrontObject(new File(".\\models\\house3.obj"));
+        //quad = new Cube();
+        quad = new JWavefrontObject(new File(".\\models\\Poof.obj"));;
+        //barn = new JWavefrontObject(new File(".\\models\\barn.obj"));
+        //house3 = new JWavefrontObject(new File(".\\models\\house3.obj"));
         cows = new ArrayList();
         Random rand = new Random();
         Cow cow;
@@ -99,7 +101,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         skyboxShader = ShaderFactory.getInstance(ShaderType.SKYBOX_SHADER);
         terrainShader = ShaderFactory.getInstance(ShaderType.TERRAIN_SHADER);
         particles = new ArrayList<>();
-        psys = new ParticleSystem(10,0.1f,1, 40);
+        psys = new ParticleSystem(5,0.1f,0.01f, 40);
         particleShader = ShaderFactory.getInstance(ShaderType.PARTICLE_SHADER);
         floatingSpeed = 0f;
         
@@ -135,8 +137,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.init(gl);
         projectionMatrix.init(gl);
         viewMatrix.init(gl);
-        quad.init(gl, shader);
-
+        //quad.init(gl, shader);
         
         // pega os indices das matrizes no Complete Shader
         shaderHandles[0] = shader.getUniformLocation("u_modelMatrix");
@@ -180,7 +181,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
         }
-
+        try {
+            //init the model
+            quad.init(gl, shader);
+            quad.unitize();
+        } catch (IOException ex) {
+            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
+            System.exit(-1);
+        }/*
         try {
             //init the model
             barn.init(gl, shader);
@@ -196,7 +204,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         } catch (IOException ex) {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
-        }
+        }*/
         // carrega a textura do skybox
         skybox.init(gl, skyboxShader);
         try {
@@ -252,7 +260,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.scale(50, 1, 50);
         modelMatrix.bind(shaderHandles[0]);
         farm.draw();*/
-        
+        /*
         modelMatrix.loadIdentity();
         modelMatrix.translate(0, 5f, 10);
         modelMatrix.scale(5, 5, 5);
@@ -263,7 +271,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.translate(15, 5f, 0);
         modelMatrix.scale(5, 5, 5);
         modelMatrix.bind(shaderHandles[0]);
-        house3.draw();        
+        house3.draw();        */
         // sombra
 //        modelMatrix.loadIdentity();
 //        modelMatrix.translate(ufo.getX(),2,ufo.getZ());
@@ -325,10 +333,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.rotate(-1*ufo.getRy(), 0, 1, 0);
             modelMatrix.rotate(ufo.getRx(), 1, 0, 0);
             modelMatrix.rotate(ufo.getRz(), 0, 0, 1);
-            modelMatrix.scale(p.getScale(), p.getScale(), p.getScale()*0.3f);
+            modelMatrix.scale(p.getScale()*0.5f, p.getScale()*0.5f, p.getScale()*0.5f);
 //modelMatrix.updateModelViewMatrix(p.getPosition(), p.getRotation(), p.getScale(), viewMatrix.getMatrix()); ;
             modelMatrix.bind(shaderHandles[0]);
-            quad.bind();
+        //quad.bind();
             quad.draw();
         }
         //gl.glDepthMask(true);

@@ -101,7 +101,8 @@ public class Updater {
                 pos[0] = ufo.getX();
                 pos[1] = ufo.getY();
                 pos[2] = ufo.getZ();
-                ParticleSystem p = new ParticleSystem(300, 0.5f, 0, 60);
+                ParticleSystem p = new ParticleSystem(100, 0.5f, 0, 60);
+                // todo: change texture
                particles = p.explosion(pos, particles);
            }
            return particles;

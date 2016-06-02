@@ -55,7 +55,7 @@ public class ParticleSystem {
         velocity[1] *= speed * direction;
         velocity[2] *= speed * direction;        
         
-        return new Particle(center.clone(), velocity, gravityComplient, lifeLength, (float) Math.random() *360, (float) Math.random());
+        return new Particle(center.clone(), velocity, gravityComplient, lifeLength, (float) Math.random() *360, (float) Math.random()/2);
     }
      
     public ArrayList<Particle> explosion(float[] center, ArrayList<Particle> particles) {
@@ -80,7 +80,7 @@ public class ParticleSystem {
             velocity[1] *= speed;
             velocity[2] *= speed;        
 
-            particles.add(new Particle(center.clone(), velocity, gravityComplient, lifeLength, (float) Math.random() *360, (float) Math.random()));
+            particles.add(new Particle(center.clone(), velocity, gravityComplient, lifeLength, (float) Math.random() *360, (float) Math.random()/2));
             
         }
         return particles;
