@@ -62,7 +62,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private ArrayList<Particle> particles;
     //private SimpleModel quad;
     private JWavefrontObject quad;
-    //private JWavefrontObject barn, house3;
+    private JWavefrontObject barn;
+    private JWavefrontObject house3;
     private ParticleSystem psys;
     private int[] terrainShaderHandles;
     private Terrain terrain;
@@ -80,8 +81,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         simpleLight = new SimpleLight();
         //quad = new Cube();
         quad = new JWavefrontObject(new File(".\\models\\Poof.obj"));;
-        //barn = new JWavefrontObject(new File(".\\models\\barn.obj"));
-        //house3 = new JWavefrontObject(new File(".\\models\\house3.obj"));
+        barn = new JWavefrontObject(new File(".\\models\\barnblender.obj"));
+        house3 = new JWavefrontObject(new File(".\\models\\house3blender.obj"));
         cows = new ArrayList();
         Random rand = new Random();
         Cow cow;
@@ -188,7 +189,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         } catch (IOException ex) {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
-        }/*
+        }
         try {
             //init the model
             barn.init(gl, shader);
@@ -204,7 +205,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         } catch (IOException ex) {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
-        }*/
+        }
         // carrega a textura do skybox
         skybox.init(gl, skyboxShader);
         try {
@@ -253,14 +254,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         /* Elementos fixos do cenário */
 
-       /* Desenho da fazenda */
-        /*
-        modelMatrix.loadIdentity();
-        modelMatrix.translate(0, -1f, 0);
-        modelMatrix.scale(50, 1, 50);
-        modelMatrix.bind(shaderHandles[0]);
-        farm.draw();*/
-        /*
+       /* Desenho da fazenda */    
         modelMatrix.loadIdentity();
         modelMatrix.translate(0, 5f, 10);
         modelMatrix.scale(5, 5, 5);
@@ -271,7 +265,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.translate(15, 5f, 0);
         modelMatrix.scale(5, 5, 5);
         modelMatrix.bind(shaderHandles[0]);
-        house3.draw();        */
+        house3.draw();  
+        
         // sombra
 //        modelMatrix.loadIdentity();
 //        modelMatrix.translate(ufo.getX(),2,ufo.getZ());
