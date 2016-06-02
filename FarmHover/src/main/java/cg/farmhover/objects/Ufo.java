@@ -10,12 +10,12 @@ public class Ufo extends SceneObject {
     public Ufo() {
         rx = ry = rz = x = z = 0f;
         y = 10f;
-        moveVel = 0.15f;
+        moveVel = 0.2f;
         flipDeg = 1.5f;
         model = new Model(new File(".\\models\\UFO.obj"));
-        this.setScalex(2);
-        this.setScaley(2);
-        this.setScalez(2);
+        this.setScalex(2.5f);
+        this.setScaley(2.5f);
+        this.setScalez(2.5f);
     }
     
     

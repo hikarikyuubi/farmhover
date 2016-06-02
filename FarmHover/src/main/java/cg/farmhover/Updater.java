@@ -73,7 +73,6 @@ public class Updater {
         }
         cam.updatePosition(ufo);
     }
-    
     public ArrayList<Particle> particleUpdater(BitSet keyBits, ParticleSystem psys, ArrayList<Particle> particles, Ufo ufo) {
             int aux = (keyBits.get(KeyEvent.VK_UP))? 1 : 0;
             aux = (keyBits.get(KeyEvent.VK_DOWN)) ? -1 : aux;
@@ -84,11 +83,12 @@ public class Updater {
                 pos[1] = ufo.getY();
                 pos[2] = ufo.getZ();
                 float[] rot = new float[3];
-                rot[0] = ufo.getRx(); 
+                rot[0] = ufo.getRx();
                 rot[1] = ufo.getRy();
                 rot[2] = ufo.getRz();
-                particles = psys.generateParticles(1, pos, rot, particles);    
+                particles = psys.generateParticles(1, pos, rot, particles);
             }
+
             Iterator<Particle> iterator = particles.iterator();
            while(iterator.hasNext()) {
                Particle p = iterator.next();

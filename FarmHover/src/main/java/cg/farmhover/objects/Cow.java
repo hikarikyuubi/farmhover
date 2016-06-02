@@ -16,9 +16,9 @@ public class Cow extends SceneObject {
         //model = new Model(new File(".\\models\\cow.obj"));
         model = new Model(new File(".\\models\\newCow.obj"));
         rising = false;
-        this.setScalex(1);
-        this.setScaley(1);
-        this.setScalez(1);
+        this.setScalex(1.5f);
+        this.setScaley(1.5f);
+        this.setScalez(1.5f);
     }
     
     public void uprise(Ufo ufo) {

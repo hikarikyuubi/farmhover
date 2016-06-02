@@ -17,7 +17,7 @@ public class Skybox {
     private int[] vao;
     private TextureLoader texLoader;
     private Texture texture;
-    private static final float SIZE = 100f;
+    private static final float SIZE = 1200;
     private String[] TEXTURE_FILES = {"right","left","top","bottom","back","front"};
     protected float[] vertex_buffer;
 
@@ -83,10 +83,10 @@ public class Skybox {
     }
 
     public void bind() {
-        gl.glBindVertexArray(vao[0]);
-        gl.glActiveTexture(GL.GL_TEXTURE0);
+        //gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glUniform1i(texture_handle,0);
         texture.bind();
+        gl.glBindVertexArray(vao[0]);
     }
 
     public void loadTexture(String[] textureFiles, String extension) throws IOException {

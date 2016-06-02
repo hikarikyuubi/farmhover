@@ -104,6 +104,7 @@ public class TextureLoader {
             gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, dstPixelFormat,
                     get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()),
                     0, srcPixelFormat, GL.GL_UNSIGNED_BYTE, textureBuffer);
+
         } else {
             for (int i = 0; i < resourceName.length; i++) {
                 bufferedImage = loadImage(".\\images\\" + resourceName[i] + extension);
@@ -124,9 +125,9 @@ public class TextureLoader {
         gl.glGenerateMipmap(target);
         gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, minFilter);
         gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, minFilter);
-        gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S, GL.GL_CLAMP_TO_EDGE);
-        gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_T, GL.GL_CLAMP_TO_EDGE);
-        gl.glTexParameteri(target, GL3.GL_TEXTURE_WRAP_R, GL.GL_CLAMP_TO_EDGE);
+        gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S,minFilter);
+        gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_T, minFilter);
+        gl.glTexParameteri(target, GL3.GL_TEXTURE_WRAP_R, minFilter);
         return texture;
     }
 
