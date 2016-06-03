@@ -2,25 +2,27 @@ package cg.farmhover.objects;
 
 import cg.farmhover.Model;
 import cg.farmhover.TestScene;
+import static cg.farmhover.TestScene.terrain;
 import java.io.File;
 
 public class Cow extends SceneObject {
     public boolean rising;
     float fallHeight;
-    
-    public Cow(float x, float y, float z) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public static Model cow_model;
+    public Cow(float x, float y, float z) {    
+        super(new Model(new File(".\\models\\newCow.obj")), x, y, z, 1.5f, 1.5f, 1.5f);
+//        this.x = x;
+//        this.y = y;
+//        this.z = z;
         // descomentar a linha abaixo e comentar a seguinte para usar a vaca com textura
         //model = new Model(new File(".\\models\\cow.obj"));
-        model = new Model(new File(".\\models\\newCow.obj"));
+        //model = new Model(new File(".\\models\\newCow.obj"));
         rising = false;
-        this.setScalex(1.5f);
-        this.setScaley(1.5f);
-        this.setScalez(1.5f);
+//        this.setScalex(1.5f);
+//        this.setScaley(1.5f);
+//        this.setScalez(1.5f);
     }
-    
+
     public void uprise(Ufo ufo) {
         rising = true;
         fallHeight = ufo.getY();
@@ -32,8 +34,11 @@ public class Cow extends SceneObject {
         }
     }
     
-    public void applyGravity() {
-        if(!rising && y > 1) {
+    public void applyGravity(Ufo ufo) {
+        if(rising && !this.isUnderUFO(ufo)){
+            rising = false;
+        }
+        if(!rising && y > (terrain.getHeightofTerrain(this.getX(), this.getZ())+ this.getHeight()*this.getScalez())) {
             y -= (fallHeight - y) * 0.03f; // pra acelerar com o tempo 
         }
     }

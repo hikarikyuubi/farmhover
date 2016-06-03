@@ -2,10 +2,13 @@ package cg.farmhover;
 
 import static cg.farmhover.Main.animator;
 import static cg.farmhover.TestScene.cows;
+import static cg.farmhover.TestScene.objects;
+import static cg.farmhover.TestScene.terrain;
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Particle;
 import cg.farmhover.objects.ParticleSystem;
+import cg.farmhover.objects.SceneObject;
 import cg.farmhover.objects.Ufo;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -68,7 +71,7 @@ public class Updater {
         //====================================================
         ufo.rotate(rX, rY, rZ);
         ufo.move(direction, moveY);
-        if(checkUFOCollision(ufo) || (ufo.getY()<=ufo.getHeight()/2)){
+        if(checkUFOCollision(ufo) || (ufo.getY()-ufo.getHeight()*ufo.getScaley()/2)<= terrain.getHeightofTerrain(ufo.getX(), ufo.getZ())){
             ufo.move(-direction, -moveY);
         }
         cam.updatePosition(ufo);
@@ -109,6 +112,11 @@ public class Updater {
     }
     
     boolean checkUFOCollision(Ufo ufo){
+        for(SceneObject obj : objects){
+            if(ufo.isColliding(obj)){
+                return true;
+            }
+        }
         for(Cow cow : cows){
             if(ufo.isColliding(cow)){
                 return true;

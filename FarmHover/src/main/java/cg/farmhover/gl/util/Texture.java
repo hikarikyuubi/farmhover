@@ -37,7 +37,8 @@ public class Texture {
         this.textureID = textureID;
     }
 
-    public void bind() {
+    public void bind(int textureUnit) {
+        gl.glActiveTexture(textureUnit);
         gl.glBindTexture(target, textureID);
     }
 
