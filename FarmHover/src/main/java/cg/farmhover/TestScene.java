@@ -15,7 +15,7 @@ import cg.farmhover.gl.util.ShaderFactory.ShaderType;
 import cg.farmhover.models.SimpleModel;
 import cg.farmhover.models.Skybox;
 import cg.farmhover.objects.*;
-import cg.farmhover.models.Terrain;
+import cg.farmhover.models.Terrain.Terrain;
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Ufo;
@@ -83,11 +83,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         quad = new JWavefrontObject(new File(".\\models\\Poof.obj"));;
         barn = new JWavefrontObject(new File(".\\models\\barnblender.obj"));
         house3 = new JWavefrontObject(new File(".\\models\\house3blender.obj"));
+        terrain = new Terrain("heightmap",".png");
         cows = new ArrayList();
         Random rand = new Random();
         Cow cow;
         for(int i = 0; i<15; ++i){
-            cow = new Cow(rand.nextInt(50)-25,1,rand.nextInt(50)-25); // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
+            float x = rand.nextInt(50)-25;
+            float z = rand.nextInt(50)-25;
+            cow = new Cow(rand.nextInt(50)-25,terrain.getHeightofTerrain(x,z),rand.nextInt(50)-25); // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
             cow.ry = rand.nextInt(360);
             cows.add(cow); 
             
@@ -110,7 +113,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         skyboxShaderHandles = new int[3];
         particleShaderHandles = new int[3];
         terrainShaderHandles = new int[3];
-        terrain = new Terrain("heightmap",".png");
+
         //aspectRatio = 1.0f;
     }
     
@@ -166,7 +169,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         simpleLight.init(gl);
         simpleLight.bind(terrainShader);
-        simpleLight.setPosition(new float[]{1000, 90, -1000});
+        simpleLight.setPosition(new float[]{1000, 800, -1000});
         simpleLight.setAmbientColor(new float[]{1.0f, 1.0f, 1.0f});
 
 
@@ -216,8 +219,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
 
         terrain.init(gl, terrainShader);
+        String[] textures = {"blendMap","mud","grassFlowers","mud","nightGrass"};
         try {
-            terrain.loadTexture(terrain.getTextureFile(),".jpg");
+            terrain.loadTexture(textures);
         } catch (IOException ex) {
         Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
         }
