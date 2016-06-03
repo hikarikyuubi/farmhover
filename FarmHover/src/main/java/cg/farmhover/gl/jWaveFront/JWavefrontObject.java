@@ -492,8 +492,8 @@ public class JWavefrontObject {
     }
 
     //calculate the face normals for the triangles of each group
-    for (int i = 0; i < groups.size(); i++) {
-      groups.get(i).calculate_face_normals();
+    for (Group group : groups) {
+      group.calculate_face_normals();
     }
 
     //if the vertex normals are not presented, calculate them
@@ -509,9 +509,9 @@ public class JWavefrontObject {
    * @return Return the first group with the given name.
    */
   private Group findGroup(String name) {
-    for (int i = 0; i < groups.size(); i++) {
-      if (groups.get(i).name.toLowerCase().equals(name.toLowerCase())) {
-        return groups.get(i);
+    for (Group group : groups) {
+      if (group.name.toLowerCase().equals(name.toLowerCase())) {
+        return group;
       }
     }
     return null;

@@ -83,14 +83,13 @@ public class Skybox {
     }
 
     public void bind() {
-        //gl.glActiveTexture(GL.GL_TEXTURE0);
         gl.glUniform1i(texture_handle,0);
-        texture.bind();
+        texture.bind(GL.GL_TEXTURE0);
         gl.glBindVertexArray(vao[0]);
     }
 
     public void loadTexture(String[] textureFiles, String extension) throws IOException {
-        texture = texLoader.getTexture(textureFiles, GL.GL_TEXTURE_CUBE_MAP, GL.GL_RGBA, GL.GL_LINEAR, GL.GL_LINEAR, extension);
+        texture = texLoader.getCubeMapTexture(textureFiles, GL.GL_TEXTURE_CUBE_MAP, GL.GL_RGBA, GL.GL_LINEAR, extension);
     }
 
     private void create_object(GL3 gl) {

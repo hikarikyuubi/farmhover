@@ -1,8 +1,6 @@
 package cg.farmhover.gl.util;
 
 
-import com.jogamp.opengl.util.awt.ImageUtil;
-
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.color.ColorSpace;
@@ -75,13 +73,12 @@ public class TextureLoader {
      * @param target The GL target to load the texture against
      * @param dstPixelFormat The pixel format of the screen
      * @param minFilter The minimising filter
-     * @param magFilter The magnification filter
      * @return The loaded texture
      * @throws IOException Indicates a failure to access the resource
      */
-    public Texture getTexture(String[] resourceName, int target, int dstPixelFormat,
-                                       int minFilter,
-                                       int magFilter, String extension) throws IOException
+    public Texture getTexture(String resourceName, int target, int dstPixelFormat,
+                                     int minFilter,
+                                     String extension) throws IOException
     {
         int srcPixelFormat;
         BufferedImage bufferedImage;
@@ -89,11 +86,54 @@ public class TextureLoader {
         // create the texture ID for this texture
         int textureID = createTextureID();
         Texture texture = new Texture(gl,target,textureID);
-        //gl.glActiveTexture(GL3.GL_TEXTURE0);
         gl.glBindTexture(target, textureID);
 
-        if( target == GL.GL_TEXTURE_2D) {
-            bufferedImage = loadImage(".\\images\\" + resourceName[0] + extension);
+        bufferedImage = loadImage(".\\images\\" + resourceName + extension);
+        texture.setWidth(bufferedImage.getWidth());
+        texture.setHeight(bufferedImage.getHeight());
+
+        srcPixelFormat = bufferedImage.getColorModel().hasAlpha() ? GL.GL_RGBA : GL.GL_RGB;
+
+        // convert that image into a byte buffer of texture data
+        textureBuffer = convertImageData(bufferedImage, texture);
+        gl.glTexImage2D(target, 0, dstPixelFormat,
+                get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()),
+                0, srcPixelFormat, GL.GL_UNSIGNED_BYTE, textureBuffer);
+
+        gl.glGenerateMipmap(target);
+        gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, minFilter);
+        gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, minFilter);
+        gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_S,minFilter);
+        gl.glTexParameteri(target, GL.GL_TEXTURE_WRAP_T, minFilter);
+        gl.glTexParameteri(target, GL3.GL_TEXTURE_WRAP_R, minFilter);
+        return texture;
+    }
+    /**
+     * Load a texture into OpenGL from a image reference on
+     * disk.
+     *
+     * @param resourceName The location of the resource to load
+     * @param target The GL target to load the texture against
+     * @param dstPixelFormat The pixel format of the screen
+     * @param minFilter The minimising filter
+     * @return The loaded texture
+     * @throws IOException Indicates a failure to access the resource
+     */
+    public Texture getCubeMapTexture(String[] resourceName, int target, int dstPixelFormat,
+                                     int minFilter,
+                                     String extension) throws IOException
+    {
+        int srcPixelFormat;
+        BufferedImage bufferedImage;
+        ByteBuffer textureBuffer;
+        // create the texture ID for this texture
+        int textureID = createTextureID();
+        Texture texture = new Texture(gl,target,textureID);
+        gl.glBindTexture(target, textureID);
+
+        for (int i = 0; i < resourceName.length; i++) {
+            bufferedImage = loadImage(".\\images\\" + resourceName[i] + extension);
+
             texture.setWidth(bufferedImage.getWidth());
             texture.setHeight(bufferedImage.getHeight());
 
@@ -101,27 +141,11 @@ public class TextureLoader {
 
             // convert that image into a byte buffer of texture data
             textureBuffer = convertImageData(bufferedImage, texture);
-            gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, dstPixelFormat,
+            gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, dstPixelFormat,
                     get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()),
                     0, srcPixelFormat, GL.GL_UNSIGNED_BYTE, textureBuffer);
-
-        } else {
-            for (int i = 0; i < resourceName.length; i++) {
-                bufferedImage = loadImage(".\\images\\" + resourceName[i] + extension);
-
-                texture.setWidth(bufferedImage.getWidth());
-                texture.setHeight(bufferedImage.getHeight());
-
-                srcPixelFormat = bufferedImage.getColorModel().hasAlpha() ? GL.GL_RGBA : GL.GL_RGB;
-
-                // convert that image into a byte buffer of texture data
-                textureBuffer = convertImageData(bufferedImage, texture);
-                gl.glTexImage2D(GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, dstPixelFormat,
-                        get2Fold(bufferedImage.getWidth()), get2Fold(bufferedImage.getHeight()),
-                        0, srcPixelFormat, GL.GL_UNSIGNED_BYTE, textureBuffer);
-            }
-
         }
+
         gl.glGenerateMipmap(target);
         gl.glTexParameteri(target, GL.GL_TEXTURE_MAG_FILTER, minFilter);
         gl.glTexParameteri(target, GL.GL_TEXTURE_MIN_FILTER, minFilter);
