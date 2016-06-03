@@ -8,14 +8,15 @@ public class Ufo extends SceneObject {
     private float moveVel, flipDeg; // bases
     
     public Ufo() {
-        rx = ry = rz = x = z = 0f;
-        y = 10f;
+        super(".\\models\\UFO.obj", 0f, 10f, 0f, 2.5f, 2.5f, 2.5f);
+        rx = ry = rz = 0f;
+//        y = 10f;
         moveVel = 0.2f;
         flipDeg = 1.5f;
-        model = new Model(new File(".\\models\\UFO.obj"));
-        this.setScalex(2.5f);
-        this.setScaley(2.5f);
-        this.setScalez(2.5f);
+//        model = new Model(new File(".\\models\\UFO.obj"));
+//        this.setScalex(2.5f);
+//        this.setScaley(2.5f);
+//        this.setScalez(2.5f);
     }
     
     

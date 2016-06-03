@@ -19,8 +19,8 @@ void main(void)
 
   v_eye = -vec3(v_position);
 
-  //v_normal = transpose(inverse(mat3(u_viewMatrix * u_modelMatrix))) * a_normal;
-  v_normal = mat3(u_viewMatrix * u_modelMatrix) * a_normal;
+  v_normal = transpose(inverse(mat3(u_viewMatrix * u_modelMatrix))) * a_normal;
+  //v_normal = mat3(u_viewMatrix * u_modelMatrix) * a_normal;
 
   v_texcoord = a_texcoord;
 

@@ -62,14 +62,15 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private ArrayList<Particle> particles;
     //private SimpleModel quad;
     private JWavefrontObject quad;
-    private JWavefrontObject barn;
-    private JWavefrontObject house3;
+    private SceneObject house3, barn;
     private ParticleSystem psys;
     private int[] terrainShaderHandles;
     private Terrain terrain;
-
+    public static ArrayList<SceneObject> objects;
     
     public TestScene() {
+        cows = new ArrayList();
+        objects = new ArrayList();
         keyBits = new BitSet(256);
         updater = new Updater();
         shader = ShaderFactory.getInstance(ShaderType.COMPLETE_SHADER);
@@ -80,17 +81,25 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         light = new Light();
         simpleLight = new SimpleLight();
         //quad = new Cube();
-        quad = new JWavefrontObject(new File(".\\models\\Poof.obj"));;
-        barn = new JWavefrontObject(new File(".\\models\\barnblender.obj"));
-        house3 = new JWavefrontObject(new File(".\\models\\house3blender.obj"));
-        cows = new ArrayList();
+        // OBS.: 
+        //     - Objetos que sofrem colisão = SceneObject 
+        //     - Demais = JWavefrontObject
+        // Atenção: Todos os objetos, exceto o UFO e as vacas, devem ser adicionados a "objects"
+        // ------------- Objetos sem colisão -------------
+        quad = new JWavefrontObject(new File(".\\models\\Poof.obj")); // vai continuar como JWavefront pois não tem colisão
+        // ------------- Objetos com colisão -------------
+        barn = new SceneObject(".\\models\\barnblender.obj", 0f, 5f, 10f, 5f, 5f, 5f);
+        house3 = new SceneObject(".\\models\\house3blender.obj", 15f, 5f, 0f, 5f, 5f, 5f);
+        objects.add(barn);
+        objects.add(house3);
+        
+        
         Random rand = new Random();
         Cow cow;
         for(int i = 0; i<15; ++i){
             cow = new Cow(rand.nextInt(50)-25,1,rand.nextInt(50)-25); // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
             cow.ry = rand.nextInt(360);
             cows.add(cow); 
-            
         }
         ufo = new Ufo();
         cam = new Camera(ufo);
@@ -174,7 +183,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         ufo.init(gl, shader);
         for(Cow cow : cows){
             cow.init(gl, shader);
-        }  
+        }
+        for(SceneObject obj : objects){
+            obj.init(gl, shader);
+        }
         try {
             farm.init(gl, shader);
             farm.unitize();
@@ -190,22 +202,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
             System.exit(-1);
         }
-        try {
-            //init the model
-            barn.init(gl, shader);
-            barn.unitize();
-        } catch (IOException ex) {
-            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(-1);
-        }
-        try {
-            //init the model
-            house3.init(gl, shader);
-            house3.unitize();
-        } catch (IOException ex) {
-            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(-1);
-        }
+        
         // carrega a textura do skybox
         skybox.init(gl, skyboxShader);
         try {
@@ -253,19 +250,16 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix.bind(shaderHandles[2]);
 
         /* Elementos fixos do cenário */
-
+        for(SceneObject obj : objects){
+            obj.resetInverseModelMatrix();
+            modelMatrix.loadIdentity();
+            modelMatrix.translate(obj,obj.getX(), obj.getY(), obj.getZ());
+            modelMatrix.scale(obj,obj.getScalex(), obj.getScaley(), obj.getScalez());
+            modelMatrix.bind(shaderHandles[0]);
+            obj.getModel().draw();
+        }
        /* Desenho da fazenda */    
-        modelMatrix.loadIdentity();
-        modelMatrix.translate(0, 5f, 10);
-        modelMatrix.scale(5, 5, 5);
-        modelMatrix.bind(shaderHandles[0]);
-        barn.draw();
         
-        modelMatrix.loadIdentity();
-        modelMatrix.translate(15, 5f, 0);
-        modelMatrix.scale(5, 5, 5);
-        modelMatrix.bind(shaderHandles[0]);
-        house3.draw();  
         
         // sombra
 //        modelMatrix.loadIdentity();
@@ -278,10 +272,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
        
         for (Cow cow : cows) {
             cow.resetInverseModelMatrix();
-            cow.applyGravity();
+            cow.applyGravity(ufo);
             modelMatrix.loadIdentity();         
-            modelMatrix.translate(cow.getX(), cow.getY(), cow.getZ());
-            modelMatrix.rotate(cow.getRy(), 0, 1, 0);
+            modelMatrix.translate(cow, cow.getX(), cow.getY(), cow.getZ());
+            modelMatrix.rotate(cow, cow.getRy(), 0, 1, 0);
             modelMatrix.bind(shaderHandles[0]);
             cow.getModel().draw();
         }

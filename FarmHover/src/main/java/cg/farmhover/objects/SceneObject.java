@@ -3,12 +3,26 @@ package cg.farmhover.objects;
 import cg.farmhover.Model;
 import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.gl.util.Shader;
+import java.io.File;
 import java.io.IOException;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import javax.media.opengl.GL3;
 
 public class SceneObject {
+
+    public SceneObject(String filepath, float x, float y, float z,
+            float scalex, float scaley, float scalez) {
+        this.model = new Model(new File(filepath));
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.scalex = scalex;
+        this.scaley = scaley;
+        this.scalez = scalez;
+    }
+
+    
     Model model;
     private Matrix4 inverseModelMatrix;
 
@@ -197,6 +211,10 @@ public class SceneObject {
     
     public Matrix4 getInverseModelMatrix() {
         return inverseModelMatrix;
+    }
+    
+    public void setModel(Model model) {
+        this.model = model;
     }
 }
 
