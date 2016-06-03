@@ -18,6 +18,7 @@ import cg.farmhover.objects.*;
 
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
+import cg.farmhover.objects.SceneObjectFactory.ObjectType;
 import cg.farmhover.objects.Ufo;
 
 import java.awt.event.KeyAdapter;
@@ -65,10 +66,11 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private SceneObject house3, barn;
     private ParticleSystem psys;
     private int[] terrainShaderHandles;
-    private Terrain terrain;
+    public static Terrain terrain;
     public static ArrayList<SceneObject> objects;
-    
+    public static float ORIGIN = 500f;
     public TestScene() {
+        SceneObjectFactory.init();
         cows = new ArrayList();
         objects = new ArrayList();
         keyBits = new BitSet(256);
@@ -89,8 +91,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // ------------- Objetos sem colisão -------------
         quad = new JWavefrontObject(new File(".\\models\\Poof.obj")); // vai continuar como JWavefront pois não tem colisão
         // ------------- Objetos com colisão -------------
-        barn = new SceneObject(".\\models\\barnblender.obj", 500f, terrain.getHeightofTerrain(500,510), 510f, 5f, 5f, 5f);
-        house3 = new SceneObject(".\\models\\house3blender.obj", 515f, terrain.getHeightofTerrain(515,500), 500f, 5f, 5f, 5f);
+        barn = SceneObjectFactory.getInstance(ObjectType.BARN, ORIGIN + 0f, ORIGIN + 10f);
+        house3 = SceneObjectFactory.getInstance(ObjectType.OLD_HOUSE, ORIGIN + 10f, ORIGIN +10f);
         objects.add(barn);
         objects.add(house3);
 

@@ -11,9 +11,9 @@ import javax.media.opengl.GL3;
 
 public class SceneObject {
 
-    public SceneObject(String filepath, float x, float y, float z,
+    public SceneObject(Model model, float x, float y, float z,
             float scalex, float scaley, float scalez) {
-        this.model = new Model(new File(filepath));
+        this.model = model;
         this.x = x;
         this.y = y;
         this.z = z;
