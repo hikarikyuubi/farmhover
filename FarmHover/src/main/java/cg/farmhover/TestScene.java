@@ -89,27 +89,11 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // ------------- Objetos sem colisão -------------
         quad = new JWavefrontObject(new File(".\\models\\Poof.obj")); // vai continuar como JWavefront pois não tem colisão
         // ------------- Objetos com colisão -------------
-        barn = new SceneObject(".\\models\\barnblender.obj", 0f, 5f, 10f, 5f, 5f, 5f);
-        house3 = new SceneObject(".\\models\\house3blender.obj", 15f, 5f, 0f, 5f, 5f, 5f);
+        barn = new SceneObject(".\\models\\barnblender.obj", 500f, terrain.getHeightofTerrain(500,510), 510f, 5f, 5f, 5f);
+        house3 = new SceneObject(".\\models\\house3blender.obj", 515f, terrain.getHeightofTerrain(515,500), 500f, 5f, 5f, 5f);
         objects.add(barn);
         objects.add(house3);
-        
-        
-        Random rand = new Random();
-        Cow cow;
-        for(int i = 0; i<15; ++i){
-            float x = rand.nextInt(50)-25;
-            float z = rand.nextInt(50)-25;
-            cow = new Cow(rand.nextInt(50)-25,terrain.getHeightofTerrain(x,z),rand.nextInt(50)-25);
-            // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
-            cow.ry = rand.nextInt(360);
-            cows.add(cow);
-        }
-/*        for(int i = 0; i <terrain.getVertexHeights().length; i ++) {
-            for( int j =0; j < terrain.getVertexHeights().length; j ++) {
-                System.out.println(terrain.getVertexHeights()[j][j] + " " + terrain.getHeightofTerrain(j,i));
-            }
-        }*/
+
         ufo = new Ufo();
         cam = new Camera(ufo);
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
@@ -176,25 +160,42 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         //init the light
         light.init(gl,shader);
-        light.setPosition(new float[]{0, 50, -50, 1.0f});
+        light.setPosition(new float[]{1000, 800, 0, 1.0f});
         light.setAmbientColor(new float[]{0.1f, 0.1f, 0.1f, 1.0f});
-        light.setDiffuseColor(new float[]{1.0f, 1.0f, 1.0f, 1.0f});
+        light.setDiffuseColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
         light.setSpecularColor(new float[]{0.7f, 0.7f, 0.7f, 1.0f});
 
         simpleLight.init(gl);
         simpleLight.bind(terrainShader);
 
-        simpleLight.setPosition(new float[]{1000, 800, -1000});
+        simpleLight.setPosition(new float[]{1000, 800,0});
         simpleLight.setAmbientColor(new float[]{1.0f, 1.0f, 1.0f});
 
 
-
         ufo.init(gl, shader);
-        for(Cow cow : cows){
+
+        Random rand = new Random();
+        Cow cow;
+        for(int i = 0; i<15; ++i){
+            float x = rand.nextInt(50)+ Terrain.SIZE /2;
+            float z = -rand.nextInt(50)+ Terrain.SIZE /2;
+            cow = new Cow(x,1,z);
+            cows.add(cow);
             cow.init(gl, shader);
+            cow.setY(terrain.getHeightofTerrain(x,z) + cow.getHeight()/2);
+            //tudo começa em (500,500) translado de até -50 ou até +50
+            cow.ry = rand.nextInt(360);
+            //System.out.println("cow " + cow.getY());
+
         }
+        /*
+        for(Cow cow2 : cows){
+            cow2.init(gl, shader);
+        }*/
+
         for(SceneObject obj : objects){
             obj.init(gl, shader);
+            obj.setY(terrain.getHeightofTerrain(obj.getX(),obj.getZ()) + obj.getHeight()/2+2);
         }
         try {
             farm.init(gl, shader);
@@ -305,7 +306,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         terrainShader.bind();
         modelMatrix.loadIdentity();
-        modelMatrix.translate(-Terrain.SIZE /2,0,-Terrain.SIZE /2);
+        //modelMatrix.translate(-Terrain.SIZE /2,0,-Terrain.SIZE /2);
         projectionMatrix.bind(terrainShaderHandles[1]);
         viewMatrix.bind(terrainShaderHandles[2]);
         modelMatrix.bind(terrainShaderHandles[0]);

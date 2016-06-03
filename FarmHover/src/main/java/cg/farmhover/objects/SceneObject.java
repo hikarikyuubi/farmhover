@@ -43,7 +43,7 @@ public class SceneObject {
         this.model.unitize(this);
         this.inverseModelMatrix = new Matrix4();
  
-        System.err.println("======================> w:" + this.width 
+        System.err.println("======================> w:" + this.width
                            + " h:" + this.height + " d:"+ this.depth);
     }
     
@@ -215,6 +215,18 @@ public class SceneObject {
     
     public void setModel(Model model) {
         this.model = model;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public void setZ(float z) {
+        this.z = z;
     }
 }
 

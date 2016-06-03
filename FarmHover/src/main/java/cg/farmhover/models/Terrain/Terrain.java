@@ -99,6 +99,7 @@ public class Terrain {
     }
 
     public float getHeightofTerrain(float worldX, float worldZ) {
+
         float gridSquareSize = SIZE / ((float)vertexHeights.length -1);
         int gridX = (int) Math.floor(worldX / gridSquareSize);
         int gridZ = (int) Math.floor(worldZ / gridSquareSize);

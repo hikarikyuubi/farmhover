@@ -8,7 +8,7 @@ public class Ufo extends SceneObject {
     private float moveVel, flipDeg; // bases
     
     public Ufo() {
-        super(".\\models\\UFO.obj", 0f, 10f, 0f, 2.5f, 2.5f, 2.5f);
+        super(".\\models\\UFO.obj", 500f, 10f, 500f, 2.5f, 2.5f, 2.5f);
         rx = ry = rz = 0f;
 //        y = 10f;
         moveVel = 0.2f;
