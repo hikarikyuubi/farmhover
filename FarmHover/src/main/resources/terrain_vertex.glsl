@@ -18,7 +18,7 @@ void main()
 {
     vec4 worldPosition = u_modelMatrix * vec4(a_position, 1.0);
     gl_Position =   u_projectionMatrix * u_viewMatrix * worldPosition;
-    v_texcoord = a_texcoord;
+    v_texcoord = a_texcoord * 40;
 
     surfaceNormal = (u_modelMatrix * vec4(a_normal,0.0)).xyz;
     toLightVector = lightPosition - worldPosition.xyz;

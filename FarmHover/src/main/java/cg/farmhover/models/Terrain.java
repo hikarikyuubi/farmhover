@@ -1,7 +1,6 @@
-package cg.farmhover.models.Terrain;
+package cg.farmhover.models;
 
 
-import cg.farmhover.Util;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.Texture;
 import cg.farmhover.gl.util.TextureLoader;
@@ -12,8 +11,10 @@ import javax.media.opengl.GL;
 import javax.media.opengl.GL3;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class Terrain {
 
@@ -21,23 +22,17 @@ public class Terrain {
     private int vertex_positions_handle;
     private int vertex_normals_handle;
     private int vertex_texcoords_handle;
-    private int backgroundTextureHandle;
-    private int rTextureHanfle;
-    private int gTextureHandle;
-    private int bTextureHandle;
-    private int blendmapTextureHandle;
+    private int texture_handle;
     private int[] vao;
-    private Texture blendMap;
+    private Texture texture;
     private TextureLoader loader;
-    private TerrainTexturePack textures;
     protected float[] vertex_buffer;
     protected float[] normal_buffer;
     protected int[] indices_buffer;
     protected float[] texture_buffer;
-    private float[][] vertexHeights;
 
 
-    private String TEXTURE = "nightGrass";
+    private String[] TEXTURE = {"nightGrass"};
 
     public static final float SIZE = 1000;
     public static int VERTEX_COUNT;
@@ -45,7 +40,6 @@ public class Terrain {
     private static final float MAX_PIXEL_COLOUR = 256*256*256;
 
     public Terrain(String heightmapName, String extension) {
-        textures = new TerrainTexturePack();
         BufferedImage image = null;
         try {
             String ref = "images/"+heightmapName + extension;
@@ -58,7 +52,7 @@ public class Terrain {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        vertexHeights = new float[VERTEX_COUNT][VERTEX_COUNT];
+
         int count = VERTEX_COUNT * VERTEX_COUNT;
         vertex_buffer = new float[count * 3];
         normal_buffer = new float[count * 3];
@@ -68,9 +62,7 @@ public class Terrain {
         for(int i=0;i<VERTEX_COUNT;i++){
             for(int j=0;j<VERTEX_COUNT;j++){
                 vertex_buffer[vertexPointer*3] = (float)j/((float)VERTEX_COUNT - 1) * SIZE;
-                float height =  getHeight(j,i,image);
-                vertexHeights[j][i] = height;
-                vertex_buffer[vertexPointer*3+1] = height;
+                vertex_buffer[vertexPointer*3+1] = getHeight(j,i,image);
                 vertex_buffer[vertexPointer*3+2] = (float)i/((float)VERTEX_COUNT - 1) * SIZE;
                 float[] normal = calculateNormal(j,i,image);
                 normal_buffer[vertexPointer*3] = normal[0];
@@ -98,32 +90,6 @@ public class Terrain {
         }
     }
 
-    public float getHeightofTerrain(float worldX, float worldZ) {
-        float gridSquareSize = SIZE / ((float)vertexHeights.length -1);
-        int gridX = (int) Math.floor(worldX / gridSquareSize);
-        int gridZ = (int) Math.floor(worldZ / gridSquareSize);
-        if (gridX >= vertexHeights.length - 1 || gridZ >= vertexHeights.length - 1 || gridX < 0 || gridZ < 0) {
-            return 0;
-        }
-        float xCoord = (worldX % gridSquareSize)/gridSquareSize;
-        float zCoord = (worldZ % gridSquareSize)/gridSquareSize;
-        float answer;
-        if (xCoord <= (1-zCoord)) {
-            float[] aux1 = new float[] {0,vertexHeights[gridX][gridZ],0};
-            float[] aux2 = new float[] {1,vertexHeights[gridX+1][gridZ],0};
-            float[] aux3 = new float[] {0,vertexHeights[gridX][gridZ+1],1};
-            float[] aux4 = new float[] {xCoord,zCoord};
-            answer = Util.barryCentric(aux1,aux2,aux3,aux4);
-        } else {
-            float[] aux1 = new float[] {1,vertexHeights[gridX+1][gridZ],0};
-            float[] aux2 = new float[] {1,vertexHeights[gridX+1][gridZ+1],1};
-            float[] aux3 = new float[] {0,vertexHeights[gridX][gridZ+1],1};
-            float[] aux4 = new float[] {xCoord,zCoord};
-            answer = Util.barryCentric(aux1,aux2,aux3,aux4);
-        }
-        return answer;
-
-    }
     private float[] calculateNormal(int x, int y,BufferedImage heightmap) {
         float heightL = getHeight(x-1,y,heightmap);
         float heightR = getHeight(x+1,y,heightmap);
@@ -166,45 +132,23 @@ public class Terrain {
         this.vertex_positions_handle = shader.getAttribLocation("a_position");
         this.vertex_normals_handle = shader.getAttribLocation("a_normal");
         this.vertex_texcoords_handle = shader.getAttribLocation("a_texcoord");
-        this.backgroundTextureHandle = shader.getUniformLocation("backgroundTexture");
-        this.rTextureHanfle = shader.getUniformLocation("rTexture");
-        this.gTextureHandle = shader.getUniformLocation("gTexture");
-        this.bTextureHandle = shader.getUniformLocation("bTexture");
-        this.blendmapTextureHandle = shader.getUniformLocation("blendMap");
+        this.texture_handle = shader.getUniformLocation("u_texture");
         loader = new TextureLoader(gl);
         create_object(gl);
     }
 
     public void bind() {
-
-        textures.getBackgroundTexture().bind(GL.GL_TEXTURE0);
-        textures.getrTexture().bind(GL.GL_TEXTURE1);
-        textures.getgTexture().bind(GL.GL_TEXTURE2);
-        textures.getbTexture().bind(GL.GL_TEXTURE3);
-        this.blendMap.bind(GL.GL_TEXTURE4);
-        gl.glUniform1i(backgroundTextureHandle,0);
-        gl.glUniform1i(rTextureHanfle,1);
-        gl.glUniform1i(gTextureHandle,2);
-        gl.glUniform1i(bTextureHandle,3);
-        gl.glUniform1i(blendmapTextureHandle,4);
+        //gl.glActiveTexture(GL.GL_TEXTURE0);
+        texture.bind();
+        gl.glUniform1i(texture_handle,0);
         gl.glBindVertexArray(vao[0]);
     }
     public void dispose() {
     }
 
-    public void loadTexture(String[] fileNames) throws IOException {
-        Texture temp;
-        this.blendMap = loader.getTexture(fileNames[0], GL.GL_TEXTURE_2D, GL.GL_RGBA, GL.GL_LINEAR, ".png");
-        temp = loader.getTexture(fileNames[1], GL.GL_TEXTURE_2D, GL.GL_RGBA, GL.GL_LINEAR, ".png");
-        textures.setrTexture(temp);
-        temp = loader.getTexture(fileNames[2], GL.GL_TEXTURE_2D, GL.GL_RGBA, GL.GL_LINEAR, ".png");
-        textures.setgTexture(temp);
-        temp = loader.getTexture(fileNames[3], GL.GL_TEXTURE_2D, GL.GL_RGBA, GL.GL_LINEAR, ".png");
-        textures.setbTexture(temp);
-        temp = loader.getTexture(fileNames[4], GL.GL_TEXTURE_2D, GL.GL_RGBA, GL.GL_LINEAR, ".jpg");
-        textures.setBackgroundTexture(temp);
+    public void loadTexture(String[] filename,String extension) throws IOException {
+        texture = loader.getTexture(filename, GL.GL_TEXTURE_2D, GL.GL_RGBA, GL.GL_LINEAR, GL.GL_LINEAR, extension);
     }
-
 
     private void create_object(GL3 gl) {
         vao = new int[1];
@@ -249,7 +193,10 @@ public class Terrain {
         }
     }
 
-    public float[][] getVertexHeights() {
-        return vertexHeights;
+    public String[] getTextureFile() {
+        return TEXTURE;
+    }
+    public void setTextureFile(String[] TEXTURE) {
+        this.TEXTURE = TEXTURE;
     }
 }

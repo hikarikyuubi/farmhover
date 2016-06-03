@@ -154,9 +154,9 @@ public class Shader {
   private int linkShaders(int[] shadersHandles) {
     final int programHandle = gl.glCreateProgram();
 
-    for (int shadersHandle : shadersHandles) {
-      if (shadersHandle >= 0) {
-        gl.glAttachShader(programHandle, shadersHandle);
+    for (int i = 0; i < shadersHandles.length; i++) {
+      if (shadersHandles[i] >= 0) {
+        gl.glAttachShader(programHandle, shadersHandles[i]);
       }
     }
 
