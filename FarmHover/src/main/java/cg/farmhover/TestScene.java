@@ -12,14 +12,14 @@ import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
 import cg.farmhover.gl.util.ShaderFactory.ShaderType;
-import cg.farmhover.models.SimpleModel;
 import cg.farmhover.models.Skybox;
+import cg.farmhover.models.Terrain.Terrain;
 import cg.farmhover.objects.*;
-import cg.farmhover.models.Terrain;
+
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Ufo;
-import cg.farmhover.models.Cube;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -80,6 +80,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix = new Matrix4();
         light = new Light();
         simpleLight = new SimpleLight();
+        terrain = new Terrain("heightmap",".png");
         //quad = new Cube();
         // OBS.: 
         //     - Objetos que sofrem colisão = SceneObject 
@@ -97,10 +98,18 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         Random rand = new Random();
         Cow cow;
         for(int i = 0; i<15; ++i){
-            cow = new Cow(rand.nextInt(50)-25,1,rand.nextInt(50)-25); // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
+            float x = rand.nextInt(50)-25;
+            float z = rand.nextInt(50)-25;
+            cow = new Cow(rand.nextInt(50)-25,terrain.getHeightofTerrain(x,z),rand.nextInt(50)-25);
+            // -25 pra ir de -25 a +25, já que a fazenda tá w=50 h=50
             cow.ry = rand.nextInt(360);
-            cows.add(cow); 
+            cows.add(cow);
         }
+/*        for(int i = 0; i <terrain.getVertexHeights().length; i ++) {
+            for( int j =0; j < terrain.getVertexHeights().length; j ++) {
+                System.out.println(terrain.getVertexHeights()[j][j] + " " + terrain.getHeightofTerrain(j,i));
+            }
+        }*/
         ufo = new Ufo();
         cam = new Camera(ufo);
         farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
@@ -119,7 +128,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         skyboxShaderHandles = new int[3];
         particleShaderHandles = new int[3];
         terrainShaderHandles = new int[3];
-        terrain = new Terrain("heightmap",".png");
         //aspectRatio = 1.0f;
     }
     
@@ -175,7 +183,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         simpleLight.init(gl);
         simpleLight.bind(terrainShader);
-        simpleLight.setPosition(new float[]{1000, 90, -1000});
+
+        simpleLight.setPosition(new float[]{1000, 800, -1000});
         simpleLight.setAmbientColor(new float[]{1.0f, 1.0f, 1.0f});
 
 
@@ -213,8 +222,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
 
         terrain.init(gl, terrainShader);
+        String[] textures = {"blendMap","mud","grassFlowers","mud","nightGrass"};
         try {
-            terrain.loadTexture(terrain.getTextureFile(),".jpg");
+            terrain.loadTexture(textures);
         } catch (IOException ex) {
         Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
         }

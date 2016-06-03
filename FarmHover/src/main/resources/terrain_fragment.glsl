@@ -9,18 +9,35 @@ in vec3 toLightVector;
 
 out vec4 fragColor;
 
-uniform sampler2D u_texture;
+uniform sampler2D backgroundTexture;
+uniform sampler2D rTexture;
+uniform sampler2D gTexture;
+uniform sampler2D bTexture;
+uniform sampler2D blendMap;
 uniform vec3 lightColour;
 
 void main()
 {
+
+    vec4 blendMapColour = texture(blendMap,v_texcoord);
+    float backTextureAmount = 1 - (blendMapColour.r + blendMapColour.g + blendMapColour.b);
+    vec2 tiledCoords = v_texcoord * 80.0;
+
+    vec4 backGroundTextureColour = texture(backgroundTexture,tiledCoords) * backTextureAmount;
+    vec4 rTextureColour = texture(rTexture,tiledCoords) * blendMapColour.r;
+    vec4 gTextureColour = texture(gTexture,tiledCoords) * blendMapColour.g;
+    vec4 bTextureColour = texture(bTexture,tiledCoords) * blendMapColour.b;
+
+    vec4 totalColour = backGroundTextureColour + 0.2*rTextureColour + 0.2*gTextureColour + 0.2*bTextureColour;
+
+
     vec3 unitNormal = normalize(surfaceNormal);
     vec3 unitLightVector = normalize(toLightVector);
 
     float nDotl = dot(unitNormal, unitLightVector);
-    float brightness = max(nDotl,0.0);
+    float brightness = max(nDotl,0.1);
     vec3 diffuse = brightness * lightColour;
-    fragColor = vec4(diffuse,1.0) * texture(u_texture, v_texcoord);
+    fragColor = vec4(diffuse,1.0) * totalColour;
     //fragColor = texture(u_texture, v_texcoord);
 }
 /*
