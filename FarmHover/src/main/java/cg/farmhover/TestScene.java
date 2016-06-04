@@ -43,7 +43,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final Matrix4 viewMatrix;
     private final Light light;
     private final SimpleLight simpleLight;
-    private final JWavefrontObject farm;
     private float delta, aspectRatio;
     private Ufo ufo;
     private Camera cam;
@@ -63,7 +62,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private ArrayList<Particle> particles;
     //private SimpleModel quad;
     private JWavefrontObject quad;
-    private SceneObject house3, barn;
+    private SceneObject farmhouse, barn,shelter;
+    private SceneObject fence;
+    private SceneObject tractor,harvester;
+    private SceneObject corn;
     private ParticleSystem psys;
     private int[] terrainShaderHandles;
     public static Terrain terrain;
@@ -91,14 +93,39 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         // ------------- Objetos sem colisão -------------
         quad = new JWavefrontObject(new File(".\\models\\Poof.obj")); // vai continuar como JWavefront pois não tem colisão
         // ------------- Objetos com colisão -------------
-        barn = SceneObjectFactory.getInstance(ObjectType.BARN, ORIGIN + 0f, ORIGIN + 10f);
-        house3 = SceneObjectFactory.getInstance(ObjectType.OLD_HOUSE, ORIGIN + 10f, ORIGIN +10f);
-        objects.add(barn);
-        objects.add(house3);
+       
+            //farm
+            
+            farmhouse = SceneObjectFactory.getInstance(ObjectType.FARMHOUSE, ORIGIN + 15f, ORIGIN +10f);
+           //metade do shelter esta enterrado no relevo
+            shelter = SceneObjectFactory.getInstance(ObjectType.SHELTER, ORIGIN + 0f, ORIGIN +30f);
+            shelter.setY(5f);
+            System.out.println("shelter y:"+shelter.getY());
+            barn = SceneObjectFactory.getInstance(ObjectType.BARN, ORIGIN + 0f, ORIGIN - 20f);
+            barn.ry = 90;
+            fence = SceneObjectFactory.getInstance(ObjectType.FENCE, ORIGIN + -5f, ORIGIN + 37.5f);
+            harvester = SceneObjectFactory.getInstance(ObjectType.HARVESTER, ORIGIN - 8f, ORIGIN + 32f);
+            tractor = SceneObjectFactory.getInstance(ObjectType.TRACTOR, ORIGIN + -8f, ORIGIN + 26f);
+            tractor.ry = 180;
+            for(int k =0; k<4;k++){
+
+                for(int j=0;j<4; j++){
+                    corn = SceneObjectFactory.getInstance(ObjectType.CORN, ORIGIN-16+ 4*k, ORIGIN + 42f+4*j);
+                    objects.add(corn);
+                }
+
+            }
+
+            objects.add(barn);
+            objects.add(farmhouse);
+            objects.add(shelter);
+            objects.add(harvester);
+            objects.add(tractor);
+            
+        
 
         ufo = new Ufo();
         cam = new Camera(ufo);
-        farm = new JWavefrontObject(new File(".\\models\\cube.obj"));
         shadow = new JWavefrontObject(new File(".\\models\\shadow.obj"));
         delta = 5f;
         
@@ -178,7 +205,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         Random rand = new Random();
         Cow cow;
-        for(int i = 0; i<15; ++i){
+        for(int i = 0; i<10; ++i){
             float x = rand.nextInt(50)+ Terrain.SIZE /2;
             float z = -rand.nextInt(50)+ Terrain.SIZE /2;
             cow = new Cow(x,1,z);
@@ -199,13 +226,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             obj.init(gl, shader);
             obj.setY(terrain.getHeightofTerrain(obj.getX(),obj.getZ()) + obj.getHeight()/2+2);
         }
-        try {
-            farm.init(gl, shader);
-            farm.unitize();
-        } catch (IOException ex) {
-            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
-            System.exit(-1);
-        }
+        
         try {
             //init the model
             quad.init(gl, shader);
@@ -268,6 +289,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.loadIdentity();
             modelMatrix.translate(obj,obj.getX(), obj.getY(), obj.getZ());
             modelMatrix.scale(obj,obj.getScalex(), obj.getScaley(), obj.getScalez());
+            modelMatrix.rotate(obj, obj.getRy(), 0, 1, 0);
             modelMatrix.bind(shaderHandles[0]);
             obj.getModel().draw();
         }
@@ -296,7 +318,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         /* Desenho do OVNI */
         ufo.resetInverseModelMatrix();
         modelMatrix.loadIdentity();
-        //modelMatrix.translate(0,0.1f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
+        //modelMatrix.translate(0,0.5f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
         modelMatrix.translate(ufo, ufo.getX(),ufo.getY(),ufo.getZ());
         modelMatrix.rotate(ufo, -1*ufo.getRy(), 0, 1, 0);
         modelMatrix.rotate(ufo, ufo.getRx(), 1, 0, 0);
@@ -388,7 +410,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         ufo.getModel().dispose();
         for(Cow cow : cows){
             cow.getModel().dispose();
-        }        
+        }
+        for(SceneObject obj: objects){
+            obj.getModel().dispose();
+        }
     }
 
     @Override
