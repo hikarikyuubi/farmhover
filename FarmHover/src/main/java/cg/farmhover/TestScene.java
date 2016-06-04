@@ -66,6 +66,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private SceneObject fence;
     private SceneObject tractor,harvester;
     private SceneObject corn;
+    private SceneObject wind;
+    private SceneObject tree;
     private ParticleSystem psys;
     private int[] terrainShaderHandles;
     public static Terrain terrain;
@@ -107,6 +109,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             harvester = SceneObjectFactory.getInstance(ObjectType.HARVESTER, ORIGIN - 8f, ORIGIN + 32f);
             tractor = SceneObjectFactory.getInstance(ObjectType.TRACTOR, ORIGIN + -8f, ORIGIN + 26f);
             tractor.ry = 180;
+            wind = SceneObjectFactory.getInstance(ObjectType.WINDMILL, ORIGIN + 0f, ORIGIN + 10f);
+            tree = SceneObjectFactory.getInstance(ObjectType.TREE, ORIGIN + 10f, ORIGIN + 10f);
             for(int k =0; k<4;k++){
 
                 for(int j=0;j<4; j++){
@@ -121,6 +125,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             objects.add(shelter);
             objects.add(harvester);
             objects.add(tractor);
+            objects.add(wind);
+            //objects.add(tree);
             
         
 

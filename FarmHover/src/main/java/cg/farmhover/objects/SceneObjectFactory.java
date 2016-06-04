@@ -17,7 +17,7 @@ import java.io.File;
  * @author Barbara
  */
 public class SceneObjectFactory {
-    static Model barn_model, farmhouse_model,shelter_model, scare_model,fence_model,corn_model,tractor_model,harvester_model;
+    static Model barn_model, farmhouse_model,shelter_model, scare_model,fence_model,corn_model,tractor_model,harvester_model,windmill_model,tree_model;
    public enum ObjectType {
         BARN,
         FARMHOUSE,
@@ -26,7 +26,9 @@ public class SceneObjectFactory {
         FENCE,
         CORN,
         TRACTOR,
-        HARVESTER
+        HARVESTER,
+        WINDMILL,
+        TREE
         
   };    
    public static void init(){
@@ -39,6 +41,8 @@ public class SceneObjectFactory {
        corn_model = new  Model(new File(".\\models\\cube.obj"));
        harvester_model = new Model(new File(".\\models\\haver.obj"));
        tractor_model = new Model(new File(".\\models\\trator2.obj"));
+       windmill_model = new Model(new File(".\\models\\windmill2.obj"));
+       tree_model = new Model(new File(".\\models\\tree2.obj"));
    }
   public static SceneObject getInstance(ObjectType type, float x, float z) {
       // o y e as scales vai ser setada aqui dentro
@@ -58,6 +62,10 @@ public class SceneObjectFactory {
       return new SceneObject(harvester_model, x, terrain.getHeightofTerrain(x,z), z, 3f, 3f, 3f);
     }else if (type == ObjectType.TRACTOR) {
       return new SceneObject(tractor_model, x, terrain.getHeightofTerrain(x,z), z, 2.5f, 2.5f, 2.5f);
+    }else if (type == ObjectType.WINDMILL) {
+      return new SceneObject(windmill_model, x, terrain.getHeightofTerrain(x,z), z, 5f, 5f, 5f);
+    }else if (type == ObjectType.TREE) {
+      return new SceneObject(tree_model, x, terrain.getHeightofTerrain(x,z), z, 3f, 3f, 3f);
     }
     
     return null;
