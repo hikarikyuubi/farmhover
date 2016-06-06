@@ -120,7 +120,7 @@ public class SceneObject {
                 && (pos[2]>=(center[2]-d/2) && pos[2]<=(center[2]+d/2));
     }
     
-    float findDist(SceneObject other){
+    public float findDist(SceneObject other){
         float xdif = abs(this.x - other.getX());
         float ydif = abs(this.y - other.getY());
         float zdif = abs(this.z - other.getZ());

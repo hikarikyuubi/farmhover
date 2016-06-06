@@ -161,7 +161,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 }
 
             }
-
+            
+            
+            
             objects.add(barn);
             objects.add(farmhouse);
             objects.add(shelter);
@@ -280,7 +282,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         Random rand = new Random();
         Cow cow;
-        for(int i = 0; i<250; ++i){
+        for(int i = 0; i<1000; ++i){
             float x = 2*ORIGIN -rand.nextInt((int)(2*ORIGIN));
             float z = 2*ORIGIN -rand.nextInt((int)(2*ORIGIN));
             cow = new Cow(x,1,z);
@@ -289,7 +291,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             cow.ry = rand.nextInt(360);
         }
         
-
+        
         for(SceneObject obj : objects){
             obj.setY(terrain.getHeightofTerrain(obj.getX(),obj.getZ()) + obj.getHeight()/2+2);
         }
@@ -352,6 +354,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         /* Elementos fixos do cenário */
         for(SceneObject obj : objects){
+            if(ufo.findDist(obj)>200){
+                continue;
+            }
             obj.resetInverseModelMatrix();
             modelMatrix.loadIdentity();
             modelMatrix.translate(obj,obj.getX(), obj.getY(), obj.getZ());
@@ -406,10 +411,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         }
         /* Desenho da fazenda */    
 
-       
+        
+        
         /* Desenho das vacas */
        
         for (Cow cow : cows) {
+            if(ufo.findDist(cow)>200){
+                continue;
+            }
             cow.resetInverseModelMatrix();
             cow.applyGravity(ufo);
             modelMatrix.loadIdentity();         
