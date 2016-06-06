@@ -409,14 +409,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 
             }
         }
-        /* Desenho da fazenda */    
-
-        
-        
         /* Desenho das vacas */
        
         for (Cow cow : cows) {
-            if(ufo.findDist(cow)>200){
+            if(ufo.findDist(cow)>200 || backCamera(ufo,cam,cow)){
                 continue;
             }
             cow.resetInverseModelMatrix();
@@ -478,7 +474,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.loadIdentity();
         modelMatrix.translate(ufo.getX(),ufo.getY()-5,ufo.getZ());
         modelMatrix.scale(12,50,12);
-        modelMatrix.print();
         modelMatrix.bind(shaderHandles[0]);
         holo.bind();
         //holo.draw();
@@ -499,7 +494,13 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         gl.glFlush();
     }
-
+    
+    public boolean backCamera(Ufo ufo, Camera cam, Cow cow) {
+        return ((ufo.getZ() > cam.getZ() && cam.getZ() > cow.getZ())
+                || (ufo.getZ() < cam.getZ() && cam.getZ() < cow.getZ()))
+                && ((ufo.getX() < cam.getX() && cam.getX() < cow.getX())
+                || (ufo.getX() > cam.getX() && cam.getX() > cow.getX()));
+    }
     @Override
     public void keyPressed(KeyEvent event) {
         int keyCode = event.getKeyCode();
