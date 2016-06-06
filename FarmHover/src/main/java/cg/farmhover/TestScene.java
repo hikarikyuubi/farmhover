@@ -431,15 +431,22 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         /* Desenho do OVNI */
         ufo.resetInverseModelMatrix();
         modelMatrix.loadIdentity();
-        //modelMatrix.translate(0,0.5f*(float)Math.sin(Math.toRadians(floatingSpeed)),0);
-        modelMatrix.translate(ufo, ufo.getX(),ufo.getY(),ufo.getZ());
+        ufo.undoTurningRotation();
+        ufo.undoXRotation();
+        if(ufo.getRx()==0 && ufo.getRz()==0 && !ufo.movingXZ){
+            modelMatrix.translate(ufo, ufo.getX(),ufo.getY() + 0.5f*(float)Math.sin(Math.toRadians(floatingSpeed)),ufo.getZ());
+            floatingSpeed += 2;
+        } else {
+            modelMatrix.translate(ufo, ufo.getX(),ufo.getY(),ufo.getZ());
+            floatingSpeed = 0; // para a transição ficar suave
+        }
         modelMatrix.rotate(ufo, -1*ufo.getRy(), 0, 1, 0);
         modelMatrix.rotate(ufo, ufo.getRx(), 1, 0, 0);
         modelMatrix.rotate(ufo, ufo.getRz(), 0, 0, 1);
         modelMatrix.scale(ufo.getScalex(), ufo.getScaley(), ufo.getScalez()); // !!! tá sem o primeiro argumento !!!
         modelMatrix.bind(shaderHandles[0]);
         ufo_model.draw();
-        floatingSpeed += 2;
+        
 
         
         /* Terreno */
@@ -474,7 +481,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.print();
         modelMatrix.bind(shaderHandles[0]);
         holo.bind();
-        holo.draw();
+        //holo.draw();
         
         skyboxShader.bind();
         gl.glDepthFunc(GL.GL_LEQUAL);
@@ -508,6 +515,17 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 risingCow.rising = false;
                 risingCow = null;
             }
+        } else if(keyCode == KeyEvent.VK_D ||
+                keyCode == KeyEvent.VK_RIGHT ||
+                keyCode == KeyEvent.VK_A ||
+                keyCode == KeyEvent.VK_LEFT){
+            ufo.turning = false;
+        } else if(keyCode == KeyEvent.VK_W ||
+                keyCode == KeyEvent.VK_S ){
+            ufo.movingY = false;
+        } else if(keyCode == KeyEvent.VK_UP ||
+                keyCode == KeyEvent.VK_DOWN){
+            ufo.movingXZ = false;
         }
         
         keyBits.clear(keyCode);       

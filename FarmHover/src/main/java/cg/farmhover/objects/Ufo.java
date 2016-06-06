@@ -8,19 +8,41 @@ import java.io.File;
 
 public class Ufo extends SceneObject {
     private float moveVel, flipDeg; // bases
+    public boolean turning, movingY, movingXZ;
     
     public Ufo() {
         super(UFO, ORIGIN + 0f, 10f, ORIGIN + 0f, 2.5f, 2.5f, 2.5f);
         rx = ry = rz = 0f;
-//        y = 10f;
         moveVel = 0.2f;
-        flipDeg = 1.5f;
-//        model = new Model(new File(".\\models\\UFO.obj"));
-//        this.setScalex(2.5f);
-//        this.setScaley(2.5f);
-//        this.setScalez(2.5f);
+        flipDeg = 0.5f;
+        turning = false;
+        movingY = false; 
+        movingXZ = false;
     }
     
+    public void undoXRotation(){
+        if(!this.movingY && this.rx!=0){
+            if(this.rx>0){
+                this.rx = this.rx - z * 0.001f;
+                if(this.rx<0)   this.rx = 0;
+            } else {
+                this.rx = this.rx + z * 0.001f;
+                if(this.rx>0)   this.rx = 0;
+            }
+        }
+    }
+    
+    public void undoTurningRotation(){
+        if(!this.turning && this.rz!=0){
+            if(this.rz>0){
+                this.rz = this.rz - z * 0.003f;
+                if(this.rz<0)   this.rz = 0;
+            } else {
+                this.rz = this.rz + z * 0.003f;
+                if(this.rz>0)   this.rz = 0;
+            }
+        }
+    }
     
     public void move(int direction, int moveY) {
         this.y += (moveY * this.moveVel);
@@ -35,13 +57,13 @@ public class Ufo extends SceneObject {
     }
 
     public void rotate(int x, int y, int z) {
-        this.rx = this.rx + x * this.flipDeg;
-        if ( this.rx > 45) this.rx = 45;
-        else if ( this.rx < -45) this.rx = -45;
+        this.rx = this.rx + x * this.flipDeg*2f;
+        if ( this.rx > 25) this.rx = 25;
+        else if ( this.rx < -25) this.rx = -25;
         
         this.rz = this.rz + z * this.flipDeg;
-        if (this.rz > 80) this.rz = 80;
-        else if (this.rz < -80) this.rz = -80;
+        if (this.rz > 35) this.rz = 35;
+        else if (this.rz < -35) this.rz = -35;
         
         this.ry = (this.ry + y * this.flipDeg) % 360;
     }

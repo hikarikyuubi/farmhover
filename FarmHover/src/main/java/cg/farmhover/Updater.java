@@ -45,14 +45,29 @@ public class Updater {
                     }
                 }).start();
         } 
-        if (keyBits.get(KeyEvent.VK_W))
+        if (keyBits.get(KeyEvent.VK_W)){
             moveY = 1; // arise
-        if (keyBits.get(KeyEvent.VK_S))
+            rX = 1; 
+            ufo.movingY = true;
+        }
+        if (keyBits.get(KeyEvent.VK_S)){
             moveY = -1; // descend
-        if (keyBits.get(KeyEvent.VK_A) || keyBits.get(KeyEvent.VK_LEFT))
+            rX = -1;
+            ufo.movingY = true;
+        }
+        if (keyBits.get(KeyEvent.VK_A) || keyBits.get(KeyEvent.VK_LEFT)){
             rY = -1; // turn left
-        if (keyBits.get(KeyEvent.VK_D) || keyBits.get(KeyEvent.VK_RIGHT))
+//            direction = 1;
+            rZ = 1; 
+            ufo.turning = true;
+        }
+        if (keyBits.get(KeyEvent.VK_D) || keyBits.get(KeyEvent.VK_RIGHT)){
             rY = 1; // turn right
+//            direction = 1;
+            rZ = -1;
+            ufo.turning = true;
+        }
+            
         if (keyBits.get(KeyEvent.VK_Q))
             rZ = 1; // flip to left
         if (keyBits.get(KeyEvent.VK_E))
@@ -63,9 +78,11 @@ public class Updater {
             rX = -1; // flip backward
         if (keyBits.get(KeyEvent.VK_UP)){
             direction = 1; // Move front
+            ufo.movingXZ = true;
         }
         if (keyBits.get(KeyEvent.VK_DOWN)){
             direction = -1; // Move back
+            ufo.movingXZ = true;
         }
        
         //====================================================

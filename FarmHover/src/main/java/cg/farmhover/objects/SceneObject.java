@@ -1,16 +1,9 @@
 package cg.farmhover.objects;
 
-import cg.farmhover.Model;
 import cg.farmhover.gl.util.Matrix4;
-import cg.farmhover.gl.util.Shader;
-import java.io.File;
-import java.io.IOException;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
-import java.util.AbstractMap;
 import java.util.EnumMap;
-import java.util.Map;
-import javax.media.opengl.GL3;
 
 public class SceneObject {
     public enum ObjectType {
