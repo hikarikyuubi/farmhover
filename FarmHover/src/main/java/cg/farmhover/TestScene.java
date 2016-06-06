@@ -354,7 +354,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         /* Elementos fixos do cenário */
         for(SceneObject obj : objects){
-            if(ufo.findDist(obj)>200){
+            if(ufo.findDist(obj)>200|| backCamera(ufo, cam, obj)){
                 continue;
             }
             obj.resetInverseModelMatrix();
@@ -412,7 +412,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         /* Desenho das vacas */
        
         for (Cow cow : cows) {
-            if(ufo.findDist(cow)>200 || backCamera(ufo,cam,cow)){
+            if(ufo.findDist(cow)>200 || backCamera(ufo, cam, cow)){
                 continue;
             }
             cow.resetInverseModelMatrix();
@@ -495,11 +495,11 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         gl.glFlush();
     }
     
-    public boolean backCamera(Ufo ufo, Camera cam, Cow cow) {
-        return ((ufo.getZ() > cam.getZ() && cam.getZ() > cow.getZ())
-                || (ufo.getZ() < cam.getZ() && cam.getZ() < cow.getZ()))
-                && ((ufo.getX() < cam.getX() && cam.getX() < cow.getX())
-                || (ufo.getX() > cam.getX() && cam.getX() > cow.getX()));
+    public boolean backCamera(Ufo ufo, Camera cam, SceneObject obj) {
+        return ((ufo.getZ() > cam.getZ() && cam.getZ() > obj.getZ())
+                || (ufo.getZ() < cam.getZ() && cam.getZ() < obj.getZ()))
+                && ((ufo.getX() < cam.getX() && cam.getX() < obj.getX())
+                || (ufo.getX() > cam.getX() && cam.getX() > obj.getX()));
     }
     @Override
     public void keyPressed(KeyEvent event) {
