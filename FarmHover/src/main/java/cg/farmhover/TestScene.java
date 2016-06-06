@@ -63,7 +63,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     //private SimpleModel quad;
     private JWavefrontObject quad;
     private SceneObject farmhouse, barn,shelter;
-    private SceneObject fence;
+    private SceneObject scare;
     private SceneObject tractor,harvester;
     private SceneObject corn;
     private SceneObject wind;
@@ -99,16 +99,20 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             //farm
             
             farmhouse = SceneObjectFactory.getInstance(ObjectType.FARMHOUSE, ORIGIN + 15f, ORIGIN +10f);
+            farmhouse.rx = -90;
+            farmhouse.ry = 90;
            //metade do shelter esta enterrado no relevo
             shelter = SceneObjectFactory.getInstance(ObjectType.SHELTER, ORIGIN + 0f, ORIGIN +30f);
             shelter.setY(5f);
             System.out.println("shelter y:"+shelter.getY());
             barn = SceneObjectFactory.getInstance(ObjectType.BARN, ORIGIN + 0f, ORIGIN - 20f);
             barn.ry = 90;
-            fence = SceneObjectFactory.getInstance(ObjectType.FENCE, ORIGIN + -5f, ORIGIN + 37.5f);
             harvester = SceneObjectFactory.getInstance(ObjectType.HARVESTER, ORIGIN - 8f, ORIGIN + 32f);
             tractor = SceneObjectFactory.getInstance(ObjectType.TRACTOR, ORIGIN + -8f, ORIGIN + 26f);
             tractor.ry = 180;
+            tractor.rx = -90;
+            scare = SceneObjectFactory.getInstance(ObjectType.SCARE, ORIGIN + -20f, ORIGIN + 47f);
+            scare.ry = -90;
             wind = SceneObjectFactory.getInstance(ObjectType.WINDMILL, ORIGIN + 0f, ORIGIN + 10f);
             tree = SceneObjectFactory.getInstance(ObjectType.TREE, ORIGIN + 10f, ORIGIN + 10f);
             for(int k =0; k<4;k++){
@@ -126,7 +130,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             objects.add(harvester);
             objects.add(tractor);
             objects.add(wind);
-            //objects.add(tree);
+            objects.add(scare);
             
         
 
@@ -296,6 +300,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.translate(obj,obj.getX(), obj.getY(), obj.getZ());
             modelMatrix.scale(obj,obj.getScalex(), obj.getScaley(), obj.getScalez());
             modelMatrix.rotate(obj, obj.getRy(), 0, 1, 0);
+            modelMatrix.rotate(obj, obj.getRx(), 1, 0, 0);
+            modelMatrix.rotate(obj, obj.getRz(), 0, 0, 1);
             modelMatrix.bind(shaderHandles[0]);
             obj.getModel().draw();
         }

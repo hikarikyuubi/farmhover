@@ -32,15 +32,15 @@ public class SceneObjectFactory {
         
   };    
    public static void init(){
-       barn_model = new Model(new File(".\\models\\barn3.obj"));
-       farmhouse_model = new Model(new File(".\\models\\house3blender.obj"));
+       barn_model = new Model(new File(".\\models\\barntest.obj"));
+       farmhouse_model = new Model(new File(".\\models\\house01.obj"));
        shelter_model = new Model(new File(".\\models\\shelter.obj"));
        scare_model = new Model(new File(".\\models\\scarecrow.obj"));
        fence_model = new Model(new File(".\\models\\cerca2.obj"));
        //encontrar modelo de plantacao de milho
        corn_model = new  Model(new File(".\\models\\cube.obj"));
-       harvester_model = new Model(new File(".\\models\\haver.obj"));
-       tractor_model = new Model(new File(".\\models\\trator2.obj"));
+       harvester_model = new Model(new File(".\\models\\Harvester.obj"));
+       tractor_model = new Model(new File(".\\models\\tractor.obj"));
        windmill_model = new Model(new File(".\\models\\windmill2.obj"));
        tree_model = new Model(new File(".\\models\\tree2.obj"));
    }
