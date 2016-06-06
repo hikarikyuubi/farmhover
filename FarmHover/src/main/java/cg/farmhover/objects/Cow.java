@@ -3,6 +3,7 @@ package cg.farmhover.objects;
 import cg.farmhover.Model;
 import cg.farmhover.TestScene;
 import static cg.farmhover.TestScene.terrain;
+import static cg.farmhover.objects.SceneObject.ObjectType.COW;
 import java.io.File;
 
 public class Cow extends SceneObject {
@@ -10,7 +11,7 @@ public class Cow extends SceneObject {
     float fallHeight;
     public static Model cow_model;
     public Cow(float x, float y, float z) {    
-        super(new Model(new File(".\\models\\newCow.obj")), x, y, z, 1.5f, 1.5f, 1.5f);
+        super(COW, x, y, z, 1.5f, 1.5f, 1.5f);
 //        this.x = x;
 //        this.y = y;
 //        this.z = z;

@@ -3,13 +3,14 @@ package cg.farmhover.objects;
 import cg.farmhover.Model;
 import static cg.farmhover.TestScene.ORIGIN;
 import cg.farmhover.Util;
+import static cg.farmhover.objects.SceneObject.ObjectType.UFO;
 import java.io.File;
 
 public class Ufo extends SceneObject {
     private float moveVel, flipDeg; // bases
     
     public Ufo() {
-        super(new Model(new File(".\\models\\UFO.obj")), ORIGIN + 0f, 10f, ORIGIN + 0f, 2.5f, 2.5f, 2.5f);
+        super(UFO, ORIGIN + 0f, 10f, ORIGIN + 0f, 2.5f, 2.5f, 2.5f);
         rx = ry = rz = 0f;
 //        y = 10f;
         moveVel = 0.2f;

@@ -7,45 +7,48 @@ import java.io.File;
 import java.io.IOException;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
+import java.util.AbstractMap;
+import java.util.EnumMap;
+import java.util.Map;
 import javax.media.opengl.GL3;
 
 public class SceneObject {
+    public enum ObjectType {
+        BARN,
+        FARMHOUSE,
+        SHELTER,
+        SCARE,
+        FENCE,
+        CORN,
+        TRACTOR,
+        HARVESTER,
+        WINDMILL,
+        TREE,
+        UFO,
+        COW     
+  };
 
-    public SceneObject(Model model, float x, float y, float z,
+    public SceneObject(ObjectType type, float x, float y, float z,
             float scalex, float scaley, float scalez) {
-        this.model = model;
+        this.type = type;
         this.x = x;
         this.y = y;
         this.z = z;
         this.scalex = scalex;
         this.scaley = scaley;
         this.scalez = scalez;
+        this.inverseModelMatrix = new Matrix4();
     }
 
-    
-    Model model;
+    public static EnumMap<ObjectType, Dimension> dimensions = new EnumMap<>(ObjectType.class);
     private Matrix4 inverseModelMatrix;
 
-    
+    public ObjectType type;
     float x,y,z;
     public float rx, ry, rz; // rotação ------------ depois mudar pra getters e setters (ou não)
     private float width, height, depth;
     private float scalex, scaley, scalez;
 
-    public void init(GL3 gl, Shader shader) {
-        // Get pipeline
-
-        try {
-            model.init(gl, shader);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        this.model.unitize(this);
-        this.inverseModelMatrix = new Matrix4();
- 
-        System.err.println("======================> w:" + this.width
-                           + " h:" + this.height + " d:"+ this.depth);
-    }
     
     public void resetInverseModelMatrix(){
         inverseModelMatrix.loadIdentity();
@@ -158,15 +161,15 @@ public class SceneObject {
     }
 
     public float getWidth() {
-        return width;
+        return dimensions.get(this.type).width;
     }
 
     public float getHeight() {
-        return height;
+        return dimensions.get(this.type).height;
     }
 
     public float getDepth() {
-        return depth;
+        return dimensions.get(this.type).depth;
     }
 
     public void setWidth(float width) {
@@ -179,10 +182,6 @@ public class SceneObject {
 
     public void setDepth(float depth) {
         this.depth = depth;
-    }
-    
-    public Model getModel() {
-        return model;
     }
     
     public float getX() {
@@ -213,9 +212,6 @@ public class SceneObject {
         return inverseModelMatrix;
     }
     
-    public void setModel(Model model) {
-        this.model = model;
-    }
 
     public void setX(float x) {
         this.x = x;

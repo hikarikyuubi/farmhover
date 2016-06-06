@@ -20,7 +20,7 @@ import cg.farmhover.objects.*;
 
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
-import cg.farmhover.objects.SceneObjectFactory.ObjectType;
+import cg.farmhover.objects.SceneObject.ObjectType;
 import cg.farmhover.objects.Ufo;
 
 import java.awt.event.KeyAdapter;
@@ -75,8 +75,25 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     public static Terrain terrain;
     public static ArrayList<SceneObject> objects;
     public static float ORIGIN = 500f;
+    Model barn_model, farmhouse_model, shelter_model, scare_model, fence_model, corn_model,
+            harvester_model, tractor_model, windmill_model, tree_model, ufo_model, cow_model;
     public TestScene() {
-        SceneObjectFactory.init();
+        //=============================
+       barn_model = new Model(new File(".\\models\\barntest.obj"));
+       farmhouse_model = new Model(new File(".\\models\\house01.obj"));
+       shelter_model = new Model(new File(".\\models\\shelter.obj"));
+       scare_model = new Model(new File(".\\models\\scarecrow.obj"));
+       fence_model = new Model(new File(".\\models\\cerca2.obj"));
+       //encontrar modelo de plantacao de milho
+       corn_model = new  Model(new File(".\\models\\cube.obj"));
+       harvester_model = new Model(new File(".\\models\\Harvester.obj"));
+       tractor_model = new Model(new File(".\\models\\tractor.obj"));
+       windmill_model = new Model(new File(".\\models\\windmill2.obj"));
+       tree_model = new Model(new File(".\\models\\tree2.obj"));
+       ufo_model = new Model(new File(".\\models\\UFO.obj"));
+       cow_model = new Model(new File(".\\models\\newCow.obj"));
+       // cow com textura:  new Model(new File(".\\models\\cow.obj"));
+        //=============================
         cows = new ArrayList();
         objects = new ArrayList();
         keyBits = new BitSet(256);
@@ -100,28 +117,46 @@ public class TestScene extends KeyAdapter implements GLEventListener {
        
 
             //farm
-            
-            farmhouse = SceneObjectFactory.getInstance(ObjectType.FARMHOUSE, ORIGIN + 15f, ORIGIN +10f);
+            farmhouse = new SceneObject(ObjectType.FARMHOUSE, ORIGIN + 15f,
+                    terrain.getHeightofTerrain(ORIGIN+15f, ORIGIN+10f)+5f,
+                    ORIGIN +10f, 5f, 5f, 5f);
             farmhouse.rx = -90;
             farmhouse.ry = 90;
            //metade do shelter esta enterrado no relevo
-            shelter = SceneObjectFactory.getInstance(ObjectType.SHELTER, ORIGIN + 0f, ORIGIN +30f);
+            shelter = new SceneObject(ObjectType.SHELTER, ORIGIN + 0f,
+                    terrain.getHeightofTerrain(ORIGIN, ORIGIN+30f),
+                    ORIGIN +30f, 5f, 5f, 5f);
             shelter.setY(5f);
             System.out.println("shelter y:"+shelter.getY());
-            barn = SceneObjectFactory.getInstance(ObjectType.BARN, ORIGIN + 0f, ORIGIN - 20f);
+            barn = new SceneObject(ObjectType.BARN, ORIGIN + 0f,
+                    terrain.getHeightofTerrain(ORIGIN, ORIGIN-20f),
+                    ORIGIN - 20f, 5f, 5f, 5f);
             barn.ry = 90;
-            harvester = SceneObjectFactory.getInstance(ObjectType.HARVESTER, ORIGIN - 8f, ORIGIN + 32f);
-            tractor = SceneObjectFactory.getInstance(ObjectType.TRACTOR, ORIGIN + -8f, ORIGIN + 26f);
+            harvester = new SceneObject(ObjectType.HARVESTER, ORIGIN - 8f,
+                    terrain.getHeightofTerrain(ORIGIN-8f,ORIGIN+32f),
+                    ORIGIN + 32f, 3f, 3f, 3f);
+            tractor = new SceneObject(ObjectType.TRACTOR, ORIGIN + -8f,
+                    terrain.getHeightofTerrain(ORIGIN-8f,ORIGIN + 26),
+                    ORIGIN + 26f, 2.5f, 2.5f, 2.5f);
             tractor.ry = 180;
             tractor.rx = -90;
-            scare = SceneObjectFactory.getInstance(ObjectType.SCARE, ORIGIN + -20f, ORIGIN + 47f);
+            scare = new SceneObject(ObjectType.SCARE, ORIGIN -20f,
+                    terrain.getHeightofTerrain(ORIGIN-20f, ORIGIN+47f),
+                    ORIGIN + 47f, 2f, 2f, 2f);
             scare.ry = -90;
-            wind = SceneObjectFactory.getInstance(ObjectType.WINDMILL, ORIGIN + 0f, ORIGIN + 10f);
-            tree = SceneObjectFactory.getInstance(ObjectType.TREE, ORIGIN + 10f, ORIGIN + 10f);
+            wind = new SceneObject(ObjectType.WINDMILL, ORIGIN + 0f,
+                    terrain.getHeightofTerrain(ORIGIN,ORIGIN+10f),
+                    ORIGIN + 10f, 5f, 5f, 5f);
+            
+            tree = new SceneObject(ObjectType.TREE, ORIGIN + 10f,
+                    terrain.getHeightofTerrain(ORIGIN+10f, ORIGIN+10f),
+                    ORIGIN + 10f, 3f, 3f, 3f);
             for(int k =0; k<4;k++){
 
                 for(int j=0;j<4; j++){
-                    corn = SceneObjectFactory.getInstance(ObjectType.CORN, ORIGIN-16+ 4*k, ORIGIN + 42f+4*j);
+                    corn = new SceneObject(ObjectType.CORN, ORIGIN-16+ 4*k,
+                            terrain.getHeightofTerrain(ORIGIN-16+4*k, ORIGIN +42f + 4*j),
+                            ORIGIN + 42f+4*j, 2f, 2f, 2f);
                     objects.add(corn);
                 }
 
@@ -212,28 +247,50 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         simpleLight.setAmbientColor(new float[]{1.0f, 1.0f, 1.0f});
 
 
-        ufo.init(gl, shader);
-
+        try {
+            barn_model.init(gl, shader);
+            farmhouse_model.init(gl, shader);
+            shelter_model.init(gl, shader);
+            scare_model.init(gl, shader);
+            fence_model.init(gl, shader);
+            corn_model.init(gl, shader);
+            harvester_model.init(gl, shader);
+            tractor_model.init(gl, shader);
+            windmill_model.init(gl, shader);
+            tree_model.init(gl, shader);
+            ufo_model.init(gl, shader);
+            cow_model.init(gl, shader);
+            
+            barn_model.unitize(ObjectType.BARN);
+            farmhouse_model.unitize(ObjectType.FARMHOUSE);
+            shelter_model.unitize(ObjectType.SHELTER);
+            scare_model.unitize(ObjectType.SCARE);
+            fence_model.unitize(ObjectType.FENCE);
+            corn_model.unitize(ObjectType.CORN);
+            harvester_model.unitize(ObjectType.HARVESTER);
+            tractor_model.unitize(ObjectType.TRACTOR);
+            windmill_model.unitize(ObjectType.WINDMILL);
+            tree_model.unitize(ObjectType.TREE);
+            ufo_model.unitize(ObjectType.UFO);
+            cow_model.unitize(ObjectType.COW);
+            
+        } catch (IOException ex) {
+            Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         Random rand = new Random();
         Cow cow;
-        for(int i = 0; i<10; ++i){
-            float x = rand.nextInt(50)+ Terrain.SIZE /2;
-            float z = -rand.nextInt(50)+ Terrain.SIZE /2;
+        for(int i = 0; i<250; ++i){
+            float x = 2*ORIGIN -rand.nextInt((int)(2*ORIGIN));
+            float z = 2*ORIGIN -rand.nextInt((int)(2*ORIGIN));
             cow = new Cow(x,1,z);
             cows.add(cow);
-            cow.init(gl, shader);
             cow.setY(terrain.getHeightofTerrain(x,z) + cow.getHeight()/2);
-            //tudo começa em (500,500) translado de até -50 ou até +50
             cow.ry = rand.nextInt(360);
-            //System.out.println("cow " + cow.getY());
         }
-        /*
-        for(Cow cow2 : cows){
-            cow2.init(gl, shader);
-        }*/
+        
 
         for(SceneObject obj : objects){
-            obj.init(gl, shader);
             obj.setY(terrain.getHeightofTerrain(obj.getX(),obj.getZ()) + obj.getHeight()/2+2);
         }
         
@@ -303,7 +360,49 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.rotate(obj, obj.getRx(), 1, 0, 0);
             modelMatrix.rotate(obj, obj.getRz(), 0, 0, 1);
             modelMatrix.bind(shaderHandles[0]);
-            obj.getModel().draw();
+            switch(obj.type){
+                case BARN:{
+                    barn_model.draw();
+                    break;
+                }
+                case FARMHOUSE:{
+                    farmhouse_model.draw();
+                    break;
+                }
+                case SHELTER:{
+                    shelter_model.draw();
+                    break;
+                }
+                case SCARE:{
+                    scare_model.draw();
+                    break;
+                }
+                case FENCE:{
+                    fence_model.draw();
+                    break;
+                }
+                case CORN:{
+                    corn_model.draw();
+                    break;
+                }
+                case TRACTOR:{
+                    tractor_model.draw();
+                    break;
+                }
+                case HARVESTER:{
+                    harvester_model.draw();
+                    break;
+                }
+                case WINDMILL:{
+                    windmill_model.draw();
+                    break;
+                }
+                case TREE:{
+                    tree_model.draw();
+                    break;
+                }
+                
+            }
         }
         /* Desenho da fazenda */    
 
@@ -317,7 +416,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.translate(cow, cow.getX(), cow.getY(), cow.getZ());
             modelMatrix.rotate(cow, cow.getRy(), 0, 1, 0);
             modelMatrix.bind(shaderHandles[0]);
-            cow.getModel().draw();
+            cow_model.draw();
         }
 
         /* Desenho do OVNI */
@@ -330,7 +429,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.rotate(ufo, ufo.getRz(), 0, 0, 1);
         modelMatrix.scale(ufo.getScalex(), ufo.getScaley(), ufo.getScalez()); // !!! tá sem o primeiro argumento !!!
         modelMatrix.bind(shaderHandles[0]);
-        ufo.getModel().draw();
+        ufo_model.draw();
         floatingSpeed += 2;
 
         
@@ -407,13 +506,18 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     
     @Override
     public void dispose(GLAutoDrawable glad) {
-        ufo.getModel().dispose();
-        for(Cow cow : cows){
-            cow.getModel().dispose();
-        }
-        for(SceneObject obj: objects){
-            obj.getModel().dispose();
-        }
+        barn_model.dispose();
+        farmhouse_model.dispose();
+        shelter_model.dispose();
+        scare_model.dispose();
+        fence_model.dispose();
+        corn_model.dispose();
+        harvester_model.dispose();
+        tractor_model.dispose();
+        windmill_model.dispose();
+        tree_model.dispose();
+        ufo_model.dispose();
+        cow_model.dispose();
     }
 
     @Override

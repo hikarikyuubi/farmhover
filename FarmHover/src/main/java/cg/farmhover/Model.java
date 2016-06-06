@@ -1,7 +1,10 @@
 package cg.farmhover;
 
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;
+import cg.farmhover.objects.Dimension;
 import cg.farmhover.objects.SceneObject;
+import cg.farmhover.objects.SceneObject.ObjectType;
+import static cg.farmhover.objects.SceneObject.dimensions;
 import java.io.File;
 
 public class Model extends JWavefrontObject {
@@ -10,7 +13,7 @@ public class Model extends JWavefrontObject {
         super(file);
     }
 
-    public void unitize(SceneObject obj) {
+    public void unitize(ObjectType type) {
         assert (vertices != null);
 
         float maxx, minx, maxy, miny, maxz, minz;
@@ -78,8 +81,7 @@ public class Model extends JWavefrontObject {
             vertices.get(i).z *= scale;
         }
         System.out.println("minx = "+minx+" maxx = "+maxx+" miny = "+miny+" maxy = "+maxy+"minz = "+minz+" maxz = "+maxz);
-        obj.setWidth((maxx - minx) * scale);
-        obj.setHeight((maxy - miny) * scale);
-        obj.setDepth((maxz - minz) * scale);
+        Dimension dim = new Dimension(((maxx - minx) * scale),((maxy - miny) * scale),((maxy - miny) * scale));
+        dimensions.put(type, dim);
     }
 }
