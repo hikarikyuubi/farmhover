@@ -282,7 +282,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         
         Random rand = new Random();
         Cow cow;
-        for(int i = 0; i<1000; ++i){
+        for(int i = 0; i<2000; ++i){
             float x = 2*ORIGIN -rand.nextInt((int)(2*ORIGIN));
             float z = 2*ORIGIN -rand.nextInt((int)(2*ORIGIN));
             cow = new Cow(x,1,z);
