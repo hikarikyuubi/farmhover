@@ -41,7 +41,7 @@ public class SceneObject {
     public float rx, ry, rz; // rotação ------------ depois mudar pra getters e setters (ou não)
     private float width, height, depth;
     private float scalex, scaley, scalez;
-
+    
     
     public void resetInverseModelMatrix(){
         inverseModelMatrix.loadIdentity();

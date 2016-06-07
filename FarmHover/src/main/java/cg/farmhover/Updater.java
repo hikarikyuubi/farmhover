@@ -16,7 +16,6 @@ import java.util.BitSet;
 import java.util.Iterator;
 
 public class Updater {
-    
     public Updater () {
         
     }

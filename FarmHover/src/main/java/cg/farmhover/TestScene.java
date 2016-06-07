@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package cg.farmhover;
-
 import cg.farmhover.gl.core.Light;
 import cg.farmhover.gl.core.SimpleLight;
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;

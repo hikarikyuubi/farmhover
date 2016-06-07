@@ -12,16 +12,7 @@ public class Cow extends SceneObject {
     public static Model cow_model;
     public Cow(float x, float y, float z) {    
         super(COW, x, y, z, 1.5f, 1.5f, 1.5f);
-//        this.x = x;
-//        this.y = y;
-//        this.z = z;
-        // descomentar a linha abaixo e comentar a seguinte para usar a vaca com textura
-        //model = new Model(new File(".\\models\\cow.obj"));
-        //model = new Model(new File(".\\models\\newCow.obj"));
         rising = false;
-//        this.setScalex(1.5f);
-//        this.setScaley(1.5f);
-//        this.setScalez(1.5f);
     }
 
     public void uprise(Ufo ufo) {
