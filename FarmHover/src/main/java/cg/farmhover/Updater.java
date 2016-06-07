@@ -19,7 +19,7 @@ public class Updater {
     public Updater () {
         
     }
-    
+    public volatile static boolean playMoo = false;
     public void movementApplier(BitSet keyBits, Ufo ufo, Camera cam) {
         int direction = 0, moveY = 0, rX = 0, rY = 0, rZ = 0;
         
@@ -29,6 +29,9 @@ public class Updater {
             float uz = ufo.getZ();
             for(Cow cow : cows){
                 if(cow.isUnderUFO(ufo)){
+                    if(TestScene.risingCow!=cow){
+                        playMoo = true;
+                    }
                     cow.uprise(ufo);
                     TestScene.risingCow = cow;
                     break;

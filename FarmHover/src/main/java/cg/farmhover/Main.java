@@ -2,9 +2,16 @@ package cg.farmhover;
 
 import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLProfile;
 import javax.media.opengl.awt.GLCanvas;
@@ -13,6 +20,7 @@ public class Main {
     
     public static AnimatorBase animator;
     static boolean stillRunning;
+    static AudioClip music;
     public static void main(String[] args) {
         // Get GL3 profile (to work with OpenGL 4.0)
         GLProfile profile = GLProfile.get(GLProfile.GL3);
@@ -49,21 +57,33 @@ public class Main {
                 }).start();
             }
         });
-//        new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        while(stillRunning){
-////                            System.out.println("bla");
-//                            player2.play(".\\audio\\moo.wav");
-//                            if(Updater.playMoo){
-////                                System.out.println("bli<<<<?<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-//                                player2.play(".\\audio\\moo.wav");
-//                                Updater.playMoo = false;
-//                            }
-////                            System.out.println("blu");
-//                        }
-//                    }
-//                }).start();
+        
+//        try {
+//            music = Applet.newAudioClip(new File(".\\audio\\moo.wav").toURL());
+//        } catch (MalformedURLException ex) {
+//            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while(stillRunning){
+//                            System.out.println("bla");
+                            if(Updater.playMoo){
+//                                music.play();
+                                player.play(".\\audio\\moo.wav");
+                                Updater.playMoo = false;
+                            } else {
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                              
+//                            System.out.println("blu");
+                        }
+                    }
+                }).start();
         frame.setVisible(true);
         animator.start();
         while(stillRunning){
