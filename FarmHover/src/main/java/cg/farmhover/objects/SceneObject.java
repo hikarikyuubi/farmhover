@@ -79,6 +79,7 @@ public class SceneObject {
             Cow.n_abducted_cows--;
             if(Cow.n_abducted_cows<0){
                 Main.text.setForeground(Color.red);
+                
             }
             Main.text.setText(n_abducted_cows.toString());
         }
