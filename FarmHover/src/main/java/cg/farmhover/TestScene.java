@@ -84,12 +84,12 @@ public class TestScene extends KeyAdapter implements GLEventListener {
        scare_model = new Model(new File(".\\models\\scarecrow.obj"));
        fence_model = new Model(new File(".\\models\\cerca2.obj"));
        //encontrar modelo de plantacao de milho
-       corn_model = new  Model(new File(".\\models\\cube.obj"));
+       corn_model = new  Model(new File(".\\models\\lowpolytree.obj"));
        harvester_model = new Model(new File(".\\models\\Harvester.obj"));
        tractor_model = new Model(new File(".\\models\\tractor.obj"));
-       windmill_model = new Model(new File(".\\models\\windmill2.obj"));
+       windmill_model = new Model(new File(".\\models\\windtest.obj"));
        tree_model = new Model(new File(".\\models\\tree2.obj"));
-       ufo_model = new Model(new File(".\\models\\UFO.obj"));
+       ufo_model = new Model(new File(".\\models\\ufotest2.obj"));
        cow_model = new Model(new File(".\\models\\newCow.obj"));
        // cow com textura:  new Model(new File(".\\models\\cow.obj"));
         //=============================
@@ -114,62 +114,63 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         quad = new JWavefrontObject(new File(".\\models\\Poof.obj")); // vai continuar como JWavefront pois não tem colisão
         // ------------- Objetos com colisão -------------
        
+        for (int i =-3; i< 4;i++){
+            float spaceX = 160f;
+            float spaceZ = 200f;
+            for(int width =-2;width<3;width++){
+                //farm
+                farmhouse = new SceneObject(ObjectType.FARMHOUSE, ORIGIN + 15f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN+15f, ORIGIN+10f)+5f,
+                        ORIGIN + 10f + spaceZ*width, 5f, 5f, 5f);
+                farmhouse.rx = -90;
+                farmhouse.ry = 90;
+               //shelter 
+                shelter = new SceneObject(ObjectType.SHELTER, ORIGIN + 0f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN, ORIGIN+30f),
+                        ORIGIN +30f+spaceZ*width, 5f, 5f, 5f);
+    //            shelter.setY(5f);
+    //            System.out.println("shelter y:"+shelter.getY());
+                barn = new SceneObject(ObjectType.BARN, ORIGIN + 0f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN, ORIGIN-20f),
+                        ORIGIN - 20f+ spaceZ *width, 5f, 5f, 5f);
+                barn.ry = 90;
+                harvester = new SceneObject(ObjectType.HARVESTER, ORIGIN - 8f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN-8f,ORIGIN+32f),
+                        ORIGIN + 32f+spaceZ*width, 3f, 3f, 3f);
+                tractor = new SceneObject(ObjectType.TRACTOR, ORIGIN + -8f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN-8f,ORIGIN + 26),
+                        ORIGIN + 26f+spaceZ*width, 2.5f, 2.5f, 2.5f);
+                tractor.ry = 180;
+                tractor.rx = -90;
+                scare = new SceneObject(ObjectType.SCARE, ORIGIN -20f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN-20f, ORIGIN+47f),
+                        ORIGIN + 47f+spaceZ*width, 2f, 2f, 2f);
+                scare.ry = -90;
+                wind = new SceneObject(ObjectType.WINDMILL, ORIGIN + 0f + spaceX*i,
+                        terrain.getHeightofTerrain(ORIGIN,ORIGIN+10f),
+                        ORIGIN + 10f+spaceZ*width, 5f, 5f, 5f);
 
-            //farm
-            farmhouse = new SceneObject(ObjectType.FARMHOUSE, ORIGIN + 15f,
-                    terrain.getHeightofTerrain(ORIGIN+15f, ORIGIN+10f)+5f,
-                    ORIGIN +10f, 5f, 5f, 5f);
-            farmhouse.rx = -90;
-            farmhouse.ry = 90;
-           //metade do shelter esta enterrado no relevo
-            shelter = new SceneObject(ObjectType.SHELTER, ORIGIN + 0f,
-                    terrain.getHeightofTerrain(ORIGIN, ORIGIN+30f),
-                    ORIGIN +30f, 5f, 5f, 5f);
-            shelter.setY(5f);
-            System.out.println("shelter y:"+shelter.getY());
-            barn = new SceneObject(ObjectType.BARN, ORIGIN + 0f,
-                    terrain.getHeightofTerrain(ORIGIN, ORIGIN-20f),
-                    ORIGIN - 20f, 5f, 5f, 5f);
-            barn.ry = 90;
-            harvester = new SceneObject(ObjectType.HARVESTER, ORIGIN - 8f,
-                    terrain.getHeightofTerrain(ORIGIN-8f,ORIGIN+32f),
-                    ORIGIN + 32f, 3f, 3f, 3f);
-            tractor = new SceneObject(ObjectType.TRACTOR, ORIGIN + -8f,
-                    terrain.getHeightofTerrain(ORIGIN-8f,ORIGIN + 26),
-                    ORIGIN + 26f, 2.5f, 2.5f, 2.5f);
-            tractor.ry = 180;
-            tractor.rx = -90;
-            scare = new SceneObject(ObjectType.SCARE, ORIGIN -20f,
-                    terrain.getHeightofTerrain(ORIGIN-20f, ORIGIN+47f),
-                    ORIGIN + 47f, 2f, 2f, 2f);
-            scare.ry = -90;
-            wind = new SceneObject(ObjectType.WINDMILL, ORIGIN + 0f,
-                    terrain.getHeightofTerrain(ORIGIN,ORIGIN+10f),
-                    ORIGIN + 10f, 5f, 5f, 5f);
-            
-            tree = new SceneObject(ObjectType.TREE, ORIGIN + 10f,
-                    terrain.getHeightofTerrain(ORIGIN+10f, ORIGIN+10f),
-                    ORIGIN + 10f, 3f, 3f, 3f);
-            for(int k =0; k<4;k++){
 
-                for(int j=0;j<4; j++){
-                    corn = new SceneObject(ObjectType.CORN, ORIGIN-16+ 4*k,
-                            terrain.getHeightofTerrain(ORIGIN-16+4*k, ORIGIN +42f + 4*j),
-                            ORIGIN + 42f+4*j, 2f, 2f, 2f);
-                    objects.add(corn);
+                for(int k =0; k<4;k++){
+
+                    for(int j=0;j<4; j++){
+                        corn = new SceneObject(ObjectType.CORN, ORIGIN-16+ 4*k + spaceX*i,
+                                terrain.getHeightofTerrain(ORIGIN-16+4*k, ORIGIN +42f + 4*j),
+                                ORIGIN + 42f+4*j+spaceZ*width, 2f, 2f, 2f);
+                        objects.add(corn);
+                    }
+
                 }
 
+                objects.add(barn);
+                objects.add(farmhouse);
+                objects.add(shelter);
+                objects.add(harvester);
+                objects.add(tractor);
+                objects.add(wind);
+                objects.add(scare);
             }
-            
-            
-            
-            objects.add(barn);
-            objects.add(farmhouse);
-            objects.add(shelter);
-            objects.add(harvester);
-            objects.add(tractor);
-            objects.add(wind);
-            objects.add(scare);
+        }
         
         ufo = new Ufo();
         cam = new Camera(ufo);
