@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package cg.farmhover;
+import cg.farmhover.gl.core.ConeLight;
 import cg.farmhover.gl.core.Light;
 import cg.farmhover.gl.core.SimpleLight;
 import cg.farmhover.gl.jWaveFront.JWavefrontObject;
@@ -11,9 +12,7 @@ import cg.farmhover.gl.util.Matrix4;
 import cg.farmhover.gl.util.Shader;
 import cg.farmhover.gl.util.ShaderFactory;
 import cg.farmhover.gl.util.ShaderFactory.ShaderType;
-import cg.farmhover.models.Cube;
-import cg.farmhover.models.SimpleModel;
-import cg.farmhover.models.Skybox;
+import cg.farmhover.models.*;
 import cg.farmhover.models.Terrain.Terrain;
 import cg.farmhover.objects.*;
 
@@ -27,6 +26,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.BitSet;
 import java.util.logging.Level;
@@ -44,6 +44,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private final Matrix4 viewMatrix;
     private final Light light;
     private final SimpleLight simpleLight;
+    //private final ConeLight coneLight;
     private float delta, aspectRatio;
     private Ufo ufo;
     private Camera cam;
@@ -61,7 +62,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     private int[] skyboxShaderHandles;
     private int[] particleShaderHandles;
     private ArrayList<Particle> particles;
-    private SimpleModel holo;
+    private final LightCone cone;
     private JWavefrontObject quad;
     private SceneObject farmhouse, barn,shelter;
     private SceneObject scare;
@@ -109,7 +110,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         light = new Light();
         simpleLight = new SimpleLight();
         terrain = new Terrain("heightmap",".png");
-        holo = new Cube();
+        cone = new LightCone();
+        cone.setConelight(new ConeLight());
+
         // OBS.: 
         //     - Objetos que sofrem colisão = SceneObject 
         //     - Demais = JWavefrontObject
@@ -210,6 +213,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         gl.glEnable(GL.GL_DEPTH_TEST);
         gl.glEnable(GL.GL_CULL_FACE);
 
+        //gl.glEnable(GL.GL_LINE_SMOOTH);
+        //gl.glEnable(GL.GL_BLEND);
+        //gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+
         //inicializa os shaders
         shader.init(gl);
         skyboxShader.init(gl);
@@ -220,7 +227,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         modelMatrix.init(gl);
         projectionMatrix.init(gl);
         viewMatrix.init(gl);
-        holo.init(gl, shader);
+        cone.getCone().init(gl,terrainShader);
         
         // pega os indices das matrizes no Complete Shader
         shaderHandles[0] = shader.getUniformLocation("u_modelMatrix");
@@ -248,9 +255,18 @@ public class TestScene extends KeyAdapter implements GLEventListener {
 
         simpleLight.init(gl);
         simpleLight.bind(terrainShader);
+        cone.getConelight().init(gl);
+        cone.getConelight().bind(terrainShader);
 
         simpleLight.setPosition(new float[]{1000, 800,0});
         simpleLight.setAmbientColor(new float[]{1.0f, 1.0f, 1.0f});
+
+        cone.getConelight().setPosition(new float[]{500, 10,500});
+        cone.getConelight().setAmbientColor(new float[]{0.0f, 1.0f, 0.0f});
+        cone.getConelight().setAttenuation(0.01f);
+        cone.getConelight().setConeAngle(15.0f);
+        cone.getConelight().setConeDirection(new float[]{0, -1,0});
+
 
 
         try {
@@ -325,7 +341,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         } catch (IOException ex) {
         Logger.getLogger(TestScene.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
     
     @Override // Chamado pelo animator
@@ -336,7 +351,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         light.bind();
         // A cada atualização, limpa de acordo com a cor do buffer
         gl.glClear(GL3.GL_COLOR_BUFFER_BIT | GL3.GL_DEPTH_BUFFER_BIT);
-        updater.movementApplier(keyBits, ufo, cam);
+        updater.movementApplier(keyBits, ufo, cam,cone);
         particles = updater.particleUpdater(keyBits, psys, particles, ufo);
         
         /* Projeção e View */
@@ -355,6 +370,17 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 ufo.getX(), ufo.getY()+1, ufo.getZ(),
                 cam.getLookUpX(), cam.getLookUpY(), cam.getLookUpZ());
         viewMatrix.bind(shaderHandles[2]);
+
+        /*
+        gl.glDisable(GL.GL_DEPTH_TEST);
+
+        modelMatrix.loadIdentity();
+        modelMatrix.scale(50,50,50);
+        modelMatrix.translate(500,20,500);
+        modelMatrix.bind(shaderHandles[0]);
+        cube.bind();
+        cube.draw();
+        gl.glEnable(GL.GL_DEPTH_TEST);
 
         /* Elementos fixos do cenário */
         for(SceneObject obj : objects){
@@ -445,7 +471,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         ufo_model.draw();
         
 
-        
         /* Terreno */
         terrainShader.bind();
         modelMatrix.loadIdentity();
@@ -454,6 +479,9 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         viewMatrix.bind(terrainShaderHandles[2]);
         modelMatrix.bind(terrainShaderHandles[0]);
         simpleLight.draw();
+        cone.getConelight().setPosition(new float[]{ufo.getX(),10 +
+                terrain.getHeightofTerrain(ufo.getX(),ufo.getZ()),ufo.getZ()});
+        cone.getConelight().draw();
         terrain.bind();
         terrain.draw();
 
@@ -471,13 +499,14 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             modelMatrix.bind(shaderHandles[0]);
             quad.draw();
         }
-   
+        shader.bind();
+        /*
         modelMatrix.loadIdentity();
         modelMatrix.translate(ufo.getX(),ufo.getY()-5,ufo.getZ());
         modelMatrix.scale(12,50,12);
         modelMatrix.bind(shaderHandles[0]);
-        holo.bind();
-        //holo.draw();
+        //holo.bind();
+        //holo.draw();*/
         
         skyboxShader.bind();
         gl.glDepthFunc(GL.GL_LEQUAL);
@@ -517,6 +546,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
                 risingCow.rising = false;
                 risingCow = null;
             }
+            cone.setDrawCone(false);
         } else if(keyCode == KeyEvent.VK_D ||
                 keyCode == KeyEvent.VK_RIGHT ||
                 keyCode == KeyEvent.VK_A ||

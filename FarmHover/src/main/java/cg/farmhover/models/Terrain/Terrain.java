@@ -35,15 +35,17 @@ public class Terrain {
     protected int[] indices_buffer;
     protected float[] texture_buffer;
     private float[][] vertexHeights;
-
-
-    private String TEXTURE = "nightGrass";
-
     public static final float SIZE = 1000;
     public static int VERTEX_COUNT;
     private static final float MAX_HEIGHT = 40;
     private static final float MAX_PIXEL_COLOUR = 256*256*256;
 
+    /**
+     * Le o arquivo heightmap e cria o terreno calculando as alturas dos vértices de acorodo
+     * com a intensidade da cor no heightmap
+     * @param heightmapName o nome arquivo heightmap
+     * @param extension o tipo de extensão desse arquivo
+     */
     public Terrain(String heightmapName, String extension) {
         textures = new TerrainTexturePack();
         BufferedImage image = null;
@@ -98,6 +100,12 @@ public class Terrain {
         }
     }
 
+    /**
+     * Calcula a altura do terreno em determinado pornto do mundo
+     * @param worldX a coordenada x de um ponto no mundo
+     * @param worldZ a coordenada y de um ponto no mundo
+     * @return a altura do terreo ou coordenada y do ponto
+     */
     public float getHeightofTerrain(float worldX, float worldZ) {
 
         float gridSquareSize = SIZE / ((float)vertexHeights.length -1);
@@ -124,6 +132,14 @@ public class Terrain {
         }
         return answer;
     }
+
+    /**
+     * Calcula a normal em determinada coordenada de mundo
+     * @param x
+     * @param y
+     * @param heightmap
+     * @return O vetor normal
+     */
     private float[] calculateNormal(int x, int y,BufferedImage heightmap) {
         float heightL = getHeight(x-1,y,heightmap);
         float heightR = getHeight(x+1,y,heightmap);
@@ -144,6 +160,14 @@ public class Terrain {
         vector[1] /= norm;
         vector[2] /= norm;
     }
+
+    /**
+     * Converte o brilho da cor do heightmap em uma altura
+     * @param imgCoordX coordenada x da imagem
+     * @param imgCoordY coordenada y da imagem
+     * @param heightmap a imagem
+     * @return a altura em relativa da imagem
+     */
     private float getHeight(int imgCoordX, int imgCoordY, BufferedImage heightmap) {
         if(imgCoordX <= 0 || imgCoordX >= heightmap.getHeight() || imgCoordY <= 0 || imgCoordY >= heightmap.getHeight()) {
             return 0;

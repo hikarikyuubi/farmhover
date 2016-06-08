@@ -1,8 +1,17 @@
 #version 150 core
 
+struct coneLight {
+   vec3 lightColour;
+   float attenuation;
+   float coneAngle;
+   vec3 coneDirection;
+};
+
 in vec2 v_texcoord;
 in vec3 surfaceNormal;
 in vec3 toLightVector;
+
+in vec3 toLightVectorCone;
 
 //in vec3 v_normal;
 //in vec4 v_position;
@@ -14,11 +23,14 @@ uniform sampler2D rTexture;
 uniform sampler2D gTexture;
 uniform sampler2D bTexture;
 uniform sampler2D blendMap;
+
+uniform	coneLight conelight;
 uniform vec3 lightColour;
+
 
 void main()
 {
-
+    // multitexture
     vec4 blendMapColour = texture(blendMap,v_texcoord);
     float backTextureAmount = 1 - (blendMapColour.r + blendMapColour.g + blendMapColour.b);
     vec2 tiledCoords = v_texcoord * 80.0;
@@ -30,14 +42,31 @@ void main()
 
     vec4 totalColour = backGroundTextureColour + 0.2*rTextureColour + 0.2*gTextureColour + 0.2*bTextureColour;
 
-
+    //cone light
     vec3 unitNormal = normalize(surfaceNormal);
+    vec3 unitLightVectorCone = normalize(toLightVectorCone);
+    float distanceToLight = length(toLightVectorCone);
+    float attenuation = 1.0;
+    attenuation = 1.0 / (1.0 + conelight.attenuation * distanceToLight);
+    float lightToSurfaceAngle = degrees(acos(dot(-unitLightVectorCone, normalize(conelight.coneDirection))));
+
+    if(lightToSurfaceAngle > conelight.coneAngle){
+       attenuation = 0.0;
+    }
+
+    float nDotl = dot(unitNormal, unitLightVectorCone);
+    float brightness = max(nDotl,0.0);
+    vec3 diffuseCone = brightness * conelight.lightColour;
+
+    // global light
+    unitNormal = normalize(surfaceNormal);
     vec3 unitLightVector = normalize(toLightVector);
 
-    float nDotl = dot(unitNormal, unitLightVector);
-    float brightness = max(nDotl,0.1);
+    nDotl = dot(unitNormal, unitLightVector);
+    brightness = max(nDotl,0.1);
     vec3 diffuse = brightness * lightColour;
-    fragColor = vec4(diffuse,1.0) * totalColour;
+
+    fragColor = (attenuation * vec4(diffuseCone,1.0) + vec4(diffuse,1.0)) * totalColour;
     //fragColor = texture(u_texture, v_texcoord);
 }
 /*

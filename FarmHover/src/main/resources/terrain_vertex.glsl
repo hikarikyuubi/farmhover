@@ -8,10 +8,13 @@ out vec2 v_texcoord;
 out vec3 surfaceNormal;
 out vec3 toLightVector;
 
+out vec3 toLightVectorCone;
+
 uniform mat4 u_modelMatrix;
 uniform mat4 u_projectionMatrix;
 uniform mat4 u_viewMatrix;
 uniform vec3 lightPosition;
+uniform vec3 coneLightPosition;
 
 
 void main()
@@ -22,6 +25,8 @@ void main()
 
     surfaceNormal = (u_modelMatrix * vec4(a_normal,0.0)).xyz;
     toLightVector = lightPosition - worldPosition.xyz;
+
+    toLightVectorCone = coneLightPosition - worldPosition.xyz;
 }
 /*
 #version 150

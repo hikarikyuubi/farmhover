@@ -4,6 +4,9 @@ import static cg.farmhover.Main.animator;
 import static cg.farmhover.TestScene.cows;
 import static cg.farmhover.TestScene.objects;
 import static cg.farmhover.TestScene.terrain;
+
+import cg.farmhover.gl.core.ConeLight;
+import cg.farmhover.models.LightCone;
 import cg.farmhover.objects.Camera;
 import cg.farmhover.objects.Cow;
 import cg.farmhover.objects.Particle;
@@ -21,7 +24,7 @@ public class Updater {
     public Updater () {
     }
     public volatile static boolean playMoo = false;
-    public void movementApplier(BitSet keyBits, Ufo ufo, Camera cam) {
+    public void movementApplier(BitSet keyBits, Ufo ufo, Camera cam, LightCone cone) {
         int direction = 0, moveY = 0, rX = 0, rY = 0, rZ = 0;
         
         if (keyBits.get(KeyEvent.VK_SPACE)){
@@ -38,6 +41,7 @@ public class Updater {
                     break;
                 }
             }
+            cone.setDrawCone(true);
         }
         if(keyBits.get(KeyEvent.VK_ESCAPE)){ // ESC pra fechar o programa
              new Thread(new Runnable() {
