@@ -13,8 +13,8 @@ public class Ufo extends SceneObject {
     public Ufo() {
         super(UFO, ORIGIN + 0f, 10f, ORIGIN + 0f, 2.5f, 2.5f, 2.5f);
         rx = ry = rz = 0f;
-        moveVel = 0.2f;
-        flipDeg = 0.5f;
+        moveVel = 0.35f;
+        flipDeg = 1f;
         turning = false;
         movingY = false; 
         movingXZ = false;

@@ -1,6 +1,8 @@
 package cg.farmhover.objects;
 
 import cg.farmhover.Main;
+import static cg.farmhover.TestScene.risingCow;
+import cg.farmhover.Util;
 import cg.farmhover.gl.util.Matrix4;
 import static cg.farmhover.objects.Cow.n_abducted_cows;
 import java.awt.Color;
@@ -75,12 +77,12 @@ public class SceneObject {
             return false;
         } 
         
-        if(other!=collidedObject){
+        if (other != collidedObject) {
             Cow.n_abducted_cows--;
-            if(Cow.n_abducted_cows<0){
+            if(Cow.n_abducted_cows < 0){
                 Main.text.setForeground(Color.red);
-                
             }
+            if (collidedObject == risingCow) Util.EXPLODE = true;
             Main.text.setText(n_abducted_cows.toString());
         }
         collidedObject = other;

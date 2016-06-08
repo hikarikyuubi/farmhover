@@ -10,7 +10,8 @@ package cg.farmhover;
  * @author Hikari Kyuubi
  */
 public class Util {
-        
+    public static boolean EXPLODE = false;
+    
     public static float roundDec(double number, int decimal) {
         int roundPoint = 1;
         for (int i = 0; i < decimal; i++) {

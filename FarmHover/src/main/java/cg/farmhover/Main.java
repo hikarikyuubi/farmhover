@@ -73,7 +73,7 @@ public class Main {
 
         
         
-        glCanvas.setBounds(0, 60, 1950, 1020);
+        glCanvas.setBounds(0, 60, 1360, 728);
         glCanvas.addKeyListener(listener);
         frame.pack();
         //frame.addKeyListener(listener);

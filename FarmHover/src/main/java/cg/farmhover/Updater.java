@@ -19,7 +19,6 @@ import java.util.Iterator;
 public class Updater {
     
     public Updater () {
-        
     }
     public volatile static boolean playMoo = false;
     public void movementApplier(BitSet keyBits, Ufo ufo, Camera cam) {
@@ -120,7 +119,8 @@ public class Updater {
                    iterator.remove();
                }
            }
-           if (keyBits.get(KeyEvent.VK_1)) {
+           if (keyBits.get(KeyEvent.VK_1) || Util.EXPLODE) {
+               Util.EXPLODE = false;
                float[] pos = new float[3];
                 pos[0] = ufo.getX();
                 pos[1] = ufo.getY();
