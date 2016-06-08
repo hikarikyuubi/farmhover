@@ -75,15 +75,15 @@ public class Main {
                                 player.play(".\\audio\\moo4.wav");
                                 Updater.playMoo = false;
                             }else if(Updater.playHit){
-                                player.play(".\\audio\\thump.wav");
+                                player.play(".\\audio\\thump2.wav");
                                 Updater.playHit = false;
-                            } else if(Updater.playLoop){
-                                player.play(".\\audio\\ufo_loop2.wav");
-//                                try {
-//                                    Thread.sleep(100);
-//                                } catch (InterruptedException ex) {
-//                                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-//                                }
+                            } else{
+//                                player.play(".\\audio\\ufo_loop2.wav");
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                             }
                               
 //                            System.out.println("blu");
