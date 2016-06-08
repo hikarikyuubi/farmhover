@@ -90,7 +90,7 @@ public class Updater {
         //====================================================
         ufo.rotate(rX, rY, rZ);
         ufo.move(direction, moveY);
-        if(checkUFOCollision(ufo)|| (ufo.getY() > 25f) || (ufo.getY()-ufo.getHeight()*ufo.getScaley()/2)<= terrain.getHeightofTerrain(ufo.getX(), ufo.getZ())){
+        if(checkUFOCollision(ufo)|| (ufo.getY()-ufo.getHeight()*ufo.getScaley()/2)<= terrain.getHeightofTerrain(ufo.getX(), ufo.getZ())){
             ufo.move(-direction, -moveY);
         }
         cam.updatePosition(ufo);

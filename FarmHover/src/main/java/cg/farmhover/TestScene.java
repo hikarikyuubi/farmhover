@@ -94,8 +94,8 @@ public class TestScene extends KeyAdapter implements GLEventListener {
        windmill_model = new Model(new File(".\\models\\windtest.obj"));
        tree_model = new Model(new File(".\\models\\tree2.obj"));
        ufo_model = new Model(new File(".\\models\\ufotest2.obj"));
-       cow_model = new Model(new File(".\\models\\newCow.obj"));
-       // cow com textura:  new Model(new File(".\\models\\cow.obj"));
+       cow_model = new Model(new File(".\\models\\cow.obj"));
+       // cow sem textura:  new Model(new File(".\\models\\newCow.obj"));
         //=============================
         cows = new ArrayList();
         objects = new ArrayList();
