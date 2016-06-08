@@ -16,7 +16,6 @@ import javax.swing.JTextField;
 
 
 public class Main {
-    static public volatile JTextField text;
     public static AnimatorBase animator;
     static boolean stillRunning;
     static AudioClip music;
@@ -40,43 +39,9 @@ public class Main {
 
         frame = new JFrame("FARM HOVER");
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-        frame.setUndecorated(true);
         frame.setSize(1024,768);
         frame.add(glCanvas);
-//        text = new JTextField("Hello World!");
-//        text.setText("bla");
-        text = new javax.swing.JTextField();
-        text.setEditable(false);
-        text.setBackground(new java.awt.Color(37,63,112));
-        text.setFont(new java.awt.Font("Segoe UI Emoji", 1, 36)); // NOI18N
-        text.setForeground(new java.awt.Color(123, 123, 123));
-        text.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        text.setText("0");
-        text.setAutoscrolls(false);
-        text.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        text.setMargin(new java.awt.Insets(2, 2, 2, 20));
-        frame.add(text);
-        frame.setBackground(java.awt.Color.black);
-        
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(frame.getContentPane());
-        frame.getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(text, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(text, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                )
-        );
-
-        
-        
-        glCanvas.setBounds(0, 60, 1360, 728);
         glCanvas.addKeyListener(listener);
-        frame.pack();
-        //frame.addKeyListener(listener);
         Main.animator = new FPSAnimator(glCanvas, 60);
         final AudioPlayer player = new AudioPlayer ();
         final AudioPlayer player2 = new AudioPlayer ();
