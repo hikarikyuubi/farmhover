@@ -74,6 +74,9 @@ public class Main {
 //                                music.play();
                                 player.play(".\\audio\\moo4.wav");
                                 Updater.playMoo = false;
+                            }else if(Updater.playHit){
+                                player.play(".\\audio\\thump.wav");
+                                Updater.playHit = false;
                             } else {
                                 try {
                                     Thread.sleep(100);

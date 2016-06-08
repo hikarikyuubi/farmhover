@@ -10,6 +10,7 @@ public class Ufo extends SceneObject {
     private float moveVel, flipDeg; // bases
     public boolean turning, movingY, movingXZ;
     
+    
     public Ufo() {
         super(UFO, ORIGIN + 0f, 10f, ORIGIN + 0f, 2.5f, 2.5f, 2.5f);
         rx = ry = rz = 0f;

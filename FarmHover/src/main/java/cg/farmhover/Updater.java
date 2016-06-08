@@ -24,6 +24,7 @@ public class Updater {
     public Updater () {
     }
     public volatile static boolean playMoo = false;
+    public volatile static boolean playHit = false;
     public void movementApplier(BitSet keyBits, Ufo ufo, Camera cam, LightCone cone) {
         int direction = 0, moveY = 0, rX = 0, rY = 0, rZ = 0;
         

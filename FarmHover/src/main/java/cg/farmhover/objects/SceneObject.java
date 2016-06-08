@@ -2,6 +2,7 @@ package cg.farmhover.objects;
 
 import cg.farmhover.Main;
 import static cg.farmhover.TestScene.risingCow;
+import cg.farmhover.Updater;
 import cg.farmhover.Util;
 import cg.farmhover.gl.util.Matrix4;
 import static cg.farmhover.objects.Cow.n_abducted_cows;
@@ -80,6 +81,9 @@ public class SceneObject {
         if (other != collidedObject) {
             Cow.n_abducted_cows--;
             if (collidedObject != risingCow) Util.EXPLODE = true;
+            else {
+                Updater.playHit = true;
+            }
         }
         collidedObject = other;
         
