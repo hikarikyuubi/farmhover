@@ -68,42 +68,42 @@ public class SceneObject {
     }
     
     public boolean isColliding(SceneObject other){
-        float maxDist = (Math.max(Math.max(this.width*this.scalex, this.depth*this.scalez), this.height*this.scaley) +
+        float maxDist = (Math.max(Math.max(this.getWidth()*this.scalex, this.getDepth()*this.scalez), this.getHeight()*this.scaley) +
                     Math.max(Math.max(other.getDepth()*other.getScalez(), other.getHeight()*other.getScaley()), other.getWidth()*other.getScalex()))/2;
   
         if(findDist(other)>=maxDist){ // se a distância entre os centros for maior que a soma dos 'raios' dos objetos       
             return false;
-        }
+        } else return true;
         //System.out.println("maxdist = "+maxDist + "ufo: "+this.x+", "+this.y+", "+this.z+" | cow: "+other.x+", "+other.y+", "+other.z);
-        findInverseModelMatrix();
-        float realwidth = other.getWidth()*other.getScalex();
-        float realheight = other.getHeight()*other.getScaley();
-        float realdepth = other.getDepth()*other.getScalez();
-        float ox = other.getX();
-        float oy = other.getY();
-        float oz = other.getZ();
-        // pegar cantos do 'other' no novo sistema de coordenadas
-        // extremidades da 'frente' do cubo
-        float[] topleft1 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-        float[] topright1 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-        float[] bottomleft1 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-        float[] bottomright1 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-        // extremidades de 'trás' do cubo
-        float[] topleft2 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-        float[] topright2 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-        float[] bottomleft2 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-        float[] bottomright2 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-        
-        float[] pos0  = multiplyPos4Matrix(this.x, this.y, this.z, this.inverseModelMatrix.getMatrix()); // posição pré-transformações 
-        return (isInsideCube(topleft1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(topright1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomleft1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomright1, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(topleft2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(topright2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomleft2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                || isInsideCube(bottomright2, pos0, this.width*this.scalex, this.height*this.scaley, this.depth*this.scalez)
-                );
+//        findInverseModelMatrix();
+//        float realwidth = other.getWidth()*other.getScalex();
+//        float realheight = other.getHeight()*other.getScaley();
+//        float realdepth = other.getDepth()*other.getScalez();
+//        float ox = other.getX();
+//        float oy = other.getY();
+//        float oz = other.getZ();
+//        // pegar cantos do 'other' no novo sistema de coordenadas
+//        // extremidades da 'frente' do cubo
+//        float[] topleft1 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+//        float[] topright1 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+//        float[] bottomleft1 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+//        float[] bottomright1 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
+//        // extremidades de 'trás' do cubo
+//        float[] topleft2 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+//        float[] topright2 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+//        float[] bottomleft2 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+//        float[] bottomright2 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
+//        
+//        float[] pos0  = multiplyPos4Matrix(this.x, this.y, this.z, this.inverseModelMatrix.getMatrix()); // posição pré-transformações 
+//        return (isInsideCube(topleft1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(topright1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(bottomleft1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(bottomright1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(topleft2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(topright2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(bottomleft2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                || isInsideCube(bottomright2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
+//                );
     }
     
     static private boolean isInsideCube(float[] pos, float[] center, float w, float h, float d){
@@ -131,7 +131,7 @@ public class SceneObject {
     }
 
     public void setScalex(float scalex) {
-        //this.width*=scalex;
+        //this.getWidth()*=scalex;
         this.scalex = scalex;
     }
 
@@ -140,7 +140,7 @@ public class SceneObject {
     }
 
     public void setScaley(float scaley) {
-        //this.height*=scaley;
+        //this.getHeight()*=scaley;
         this.scaley = scaley;
     }
 
@@ -149,7 +149,7 @@ public class SceneObject {
     }
 
     public void setScalez(float scalez) {
-        //this.depth*=scalex;
+        //this.getDepth()*=scalex;
         this.scalez = scalez;
     }
 
