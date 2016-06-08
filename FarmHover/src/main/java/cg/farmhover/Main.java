@@ -77,12 +77,13 @@ public class Main {
                             }else if(Updater.playHit){
                                 player.play(".\\audio\\thump.wav");
                                 Updater.playHit = false;
-                            } else {
-                                try {
-                                    Thread.sleep(100);
-                                } catch (InterruptedException ex) {
-                                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-                                }
+                            } else if(Updater.playLoop){
+                                player.play(".\\audio\\ufo_loop2.wav");
+//                                try {
+//                                    Thread.sleep(100);
+//                                } catch (InterruptedException ex) {
+//                                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+//                                }
                             }
                               
 //                            System.out.println("blu");
@@ -93,7 +94,7 @@ public class Main {
         frame.setVisible(true);
         animator.start();
         while(stillRunning){
-            player.play(".\\audio\\farm.ogg");
+            player.play(".\\audio\\farm2.wav");
         }
         
   }

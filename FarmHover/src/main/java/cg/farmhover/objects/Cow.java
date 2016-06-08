@@ -4,6 +4,7 @@ import cg.farmhover.Main;
 import cg.farmhover.Model;
 import cg.farmhover.TestScene;
 import static cg.farmhover.TestScene.terrain;
+import cg.farmhover.Updater;
 import static cg.farmhover.objects.SceneObject.ObjectType.COW;
 import java.io.File;
 
@@ -26,6 +27,7 @@ public class Cow extends SceneObject {
             ry += 5;
         } else {
             TestScene.cows.remove(this);
+            Updater.playLoop = false;
         }
     }
     

@@ -545,6 +545,7 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             if(risingCow != null){
                 risingCow.rising = false;
                 risingCow = null;
+                Updater.playLoop = false;
             }
             cone.setDrawCone(false);
         } else if(keyCode == KeyEvent.VK_D ||
