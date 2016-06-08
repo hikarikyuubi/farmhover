@@ -26,10 +26,6 @@ public class Cow extends SceneObject {
             ry += 5;
         } else {
             TestScene.cows.remove(this);
-            n_abducted_cows++;
-            if(n_abducted_cows>0)
-                Main.text.setForeground(new java.awt.Color(123, 123, 123));
-            Main.text.setText(n_abducted_cows.toString());
         }
     }
     

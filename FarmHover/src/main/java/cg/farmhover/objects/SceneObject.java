@@ -82,7 +82,7 @@ public class SceneObject {
             if(Cow.n_abducted_cows < 0){
                 Main.text.setForeground(Color.red);
             }
-            if (collidedObject == risingCow) Util.EXPLODE = true;
+            if (collidedObject != risingCow) Util.EXPLODE = true;
             Main.text.setText(n_abducted_cows.toString());
         }
         collidedObject = other;
