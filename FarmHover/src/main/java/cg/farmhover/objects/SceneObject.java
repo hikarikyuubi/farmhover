@@ -1,6 +1,9 @@
 package cg.farmhover.objects;
 
+import cg.farmhover.Main;
 import cg.farmhover.gl.util.Matrix4;
+import static cg.farmhover.objects.Cow.n_abducted_cows;
+import java.awt.Color;
 import static java.lang.Math.abs;
 import static java.lang.Math.sqrt;
 import java.util.EnumMap;
@@ -32,27 +35,19 @@ public class SceneObject {
         this.scalez = scalez;
         this.inverseModelMatrix = new Matrix4();
     }
-
+    public static SceneObject collidedObject;
     public static EnumMap<ObjectType, Dimension> dimensions = new EnumMap<>(ObjectType.class);
     private Matrix4 inverseModelMatrix;
 
     public ObjectType type;
     float x,y,z;
     public float rx, ry, rz; // rotação ------------ depois mudar pra getters e setters (ou não)
-    private float width, height, depth;
     private float scalex, scaley, scalez;
-    
+    private int collisionCounter = 0;
     
     public void resetInverseModelMatrix(){
         inverseModelMatrix.loadIdentity();
         inverseModelMatrix.getStack().clear();
-    }
-    
-    private void findInverseModelMatrix(){
-        inverseModelMatrix.loadIdentity();
-        while(!inverseModelMatrix.getStack().empty()){
-            inverseModelMatrix.multiply(inverseModelMatrix.getStack().pop());
-        }
     }
     
     static float[] multiplyPos4Matrix(float x, float y, float z, float[] matrix){
@@ -70,48 +65,28 @@ public class SceneObject {
     public boolean isColliding(SceneObject other){
         float maxDist = (Math.max(Math.max(this.getWidth()*this.scalex, this.getDepth()*this.scalez), this.getHeight()*this.scaley) +
                     Math.max(Math.max(other.getDepth()*other.getScalez(), other.getHeight()*other.getScaley()), other.getWidth()*other.getScalex()))/2;
-  
+        
         if(findDist(other)>=maxDist){ // se a distância entre os centros for maior que a soma dos 'raios' dos objetos       
+            collisionCounter++;
+            if(collisionCounter>200000){
+                collidedObject = null;
+                collisionCounter = 0;
+            }
             return false;
-        } else return true;
-        //System.out.println("maxdist = "+maxDist + "ufo: "+this.x+", "+this.y+", "+this.z+" | cow: "+other.x+", "+other.y+", "+other.z);
-//        findInverseModelMatrix();
-//        float realwidth = other.getWidth()*other.getScalex();
-//        float realheight = other.getHeight()*other.getScaley();
-//        float realdepth = other.getDepth()*other.getScalez();
-//        float ox = other.getX();
-//        float oy = other.getY();
-//        float oz = other.getZ();
-//        // pegar cantos do 'other' no novo sistema de coordenadas
-//        // extremidades da 'frente' do cubo
-//        float[] topleft1 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-//        float[] topright1 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-//        float[] bottomleft1 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-//        float[] bottomright1 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz+realdepth/2, this.inverseModelMatrix.getMatrix());
-//        // extremidades de 'trás' do cubo
-//        float[] topleft2 = multiplyPos4Matrix(ox-realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-//        float[] topright2 = multiplyPos4Matrix(ox+realwidth/2, oy+realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-//        float[] bottomleft2 = multiplyPos4Matrix(ox-realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-//        float[] bottomright2 = multiplyPos4Matrix(ox+realwidth/2, oy-realheight/2, oz-realdepth/2, this.inverseModelMatrix.getMatrix());
-//        
-//        float[] pos0  = multiplyPos4Matrix(this.x, this.y, this.z, this.inverseModelMatrix.getMatrix()); // posição pré-transformações 
-//        return (isInsideCube(topleft1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(topright1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(bottomleft1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(bottomright1, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(topleft2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(topright2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(bottomleft2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                || isInsideCube(bottomright2, pos0, this.getWidth()*this.scalex, this.getHeight()*this.scaley, this.getDepth()*this.scalez)
-//                );
+        } 
+        
+        if(other!=collidedObject){
+            Cow.n_abducted_cows--;
+            if(Cow.n_abducted_cows<0){
+                Main.text.setForeground(Color.red);
+            }
+            Main.text.setText(n_abducted_cows.toString());
+        }
+        collidedObject = other;
+        
+        return true;
     }
     
-    static private boolean isInsideCube(float[] pos, float[] center, float w, float h, float d){
-        //System.out.println(pos[0]+" "+pos[1]+" "+pos[2]);
-        return (pos[0]>=(center[0]-w/2) && pos[0]<=(center[0]+w/2)) 
-                && (pos[1]>=(center[1]-h/2) && pos[1]<=(center[1]+h/2))
-                && (pos[2]>=(center[2]-d/2) && pos[2]<=(center[2]+d/2));
-    }
     
     public float findDist(SceneObject other){
         float xdif = abs(this.x - other.getX());
@@ -163,18 +138,6 @@ public class SceneObject {
 
     public float getDepth() {
         return dimensions.get(this.type).depth;
-    }
-
-    public void setWidth(float width) {
-        this.width = width;
-    }
-
-    public void setHeight(float height) {
-        this.height = height;
-    }
-
-    public void setDepth(float depth) {
-        this.depth = depth;
     }
     
     public float getX() {

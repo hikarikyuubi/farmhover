@@ -361,7 +361,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             if(ufo.findDist(obj)>200|| backCamera(ufo, cam, obj)){
                 continue;
             }
-            obj.resetInverseModelMatrix();
             modelMatrix.loadIdentity();
             modelMatrix.translate(obj,obj.getX(), obj.getY(), obj.getZ());
             modelMatrix.scale(obj,obj.getScalex(), obj.getScaley(), obj.getScalez());
@@ -419,7 +418,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
             if(ufo.findDist(cow)>200 || backCamera(ufo, cam, cow)){
                 continue;
             }
-            cow.resetInverseModelMatrix();
             cow.applyGravity(ufo);
             modelMatrix.loadIdentity();         
             modelMatrix.translate(cow, cow.getX(), cow.getY(), cow.getZ());
@@ -429,7 +427,6 @@ public class TestScene extends KeyAdapter implements GLEventListener {
         }
 
         /* Desenho do OVNI */
-        ufo.resetInverseModelMatrix();
         modelMatrix.loadIdentity();
         ufo.undoTurningRotation();
         ufo.undoXRotation();
