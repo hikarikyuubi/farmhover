@@ -76,6 +76,10 @@ public class TestScene extends KeyAdapter implements GLEventListener {
     public static float ORIGIN = 500f;
     Model barn_model, farmhouse_model, shelter_model, scare_model, fence_model, corn_model,
             harvester_model, tractor_model, windmill_model, tree_model, ufo_model, cow_model;
+    
+    //=============================
+    
+    
     public TestScene() {
         //=============================
        barn_model = new Model(new File(".\\models\\barntest.obj"));
